@@ -1,6 +1,6 @@
 import { User, UserManager, UserProfile } from "oidc-client-ts";
-import { OidcSettings } from "types";
 import { ref } from "vue";
+import { OidcSettings } from "../types";
 
 //oidc 身份配置
 export const oidcSettings = ref<OidcSettings>();

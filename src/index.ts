@@ -1,6 +1,6 @@
 import { User, UserManager } from "oidc-client-ts";
-import { OidcSettings } from "types";
 import { Ref } from "vue";
+import { OidcSettings } from "../types";
 import { startOidc } from "./oidc";
 import { useAuthenticated } from "./user";
 import { access_token, oidcSettings, oidcUser, userMgr } from "./variable";

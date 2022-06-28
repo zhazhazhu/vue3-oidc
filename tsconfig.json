@@ -14,9 +14,6 @@
       "@/*": [
         "src/*"
       ],
-      "types/*": [
-        "types/*"
-      ]
     },
     "skipLibCheck": true,
     "lib": [
