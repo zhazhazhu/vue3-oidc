@@ -14,6 +14,9 @@
       "@/*": [
         "src/*"
       ],
+      "types/*": [
+        "types/*"
+      ]
     },
     "skipLibCheck": true,
     "lib": [
@@ -25,6 +28,7 @@
   "include": [
     "src/**/*.ts",
     "src/**/*.d.ts",
+    "types/**.d.ts"
   ],
   "exclude": [
     "node_modules",
