@@ -10,7 +10,11 @@
   "author": "zhazhazhu",
   "license": "ISC",
   "devDependencies": {
+    "@types/node": "^18.0.0",
     "tsup": "^6.1.2",
     "typescript": "^4.7.4"
+  },
+  "dependencies": {
+    "oidc-client-ts": "^2.0.5"
   }
 }
