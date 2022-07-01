@@ -1,7 +1,8 @@
 import { SigninPopupArgs, SigninRedirectArgs, User } from "oidc-client-ts";
-import { RouteLocationNormalized } from "vue-router";
+import { NavigationGuardNext, RouteLocationNormalized } from "vue-router";
 import { OidcSettings, PartialOidcSettings } from "../types/index";
 import { OidcMethodKeys } from "./index";
+import { hasPublicRoute } from "./route";
 import { useCallbackUri, useOidcUser } from "./user";
 import {
   hasAuthAccess,
@@ -39,16 +40,26 @@ export async function createSignInCallback(
   return useCallbackUri();
 }
 
-export async function handleStartSignIn(
-  route: RouteLocationNormalized,
+interface StartSignInEffectRoute {
+  to: RouteLocationNormalized;
+  form: RouteLocationNormalized;
+  next: NavigationGuardNext;
+}
+
+export async function startSignInEffect(
   method: OidcMethodKeys = "redirect",
+  route: StartSignInEffectRoute,
   args?: SigninRedirectArgs | SigninPopupArgs
 ) {
+  const { to, form, next } = route;
+
+  const isPublicRoute = hasPublicRoute(to);
+
   const user = await useOidcUser();
 
-  const path = route.path;
+  const path = to.path;
 
-  const fullRoute = route.fullPath;
+  const fullRoute = to.fullPath;
 
   const activeOidc = oidcMethodMap.value.get(method);
 
@@ -57,22 +68,27 @@ export async function handleStartSignIn(
     oidcCallbackUri.value = fullRoute;
   }
 
-  if (!user)
+  //用戶沒登陸並且不在公開路由中
+  if (!user && !isPublicRoute)
     if (origin + path !== activeOidc?.uri) {
       //判断当前路由是否是回调地址//不在则重新向到登录页
       await activeOidc?.signin(args || {});
+
       hasCallbackUri.value = false;
     } else {
       hasCallbackUri.value = true;
     }
   if (user) {
-    hasAuthAccess.value = true;
-
     setOidcUser(user);
 
     //判断过期时间是否到了
-    handleTokenExpiresAt();
+    await handleTokenExpiresAt();
+
+    hasAuthAccess.value = true;
   }
+
+  if (hasCallbackUri.value || hasAuthAccess.value || isPublicRoute) return true;
+  else return false;
 }
 
 const inlineOidcSettings: PartialOidcSettings = {
@@ -112,7 +128,7 @@ export function setOidcUser(user: User) {
   tokenExpiresAt.value = oidcUser.value?.expires_at || Date.now() + 1000;
 }
 
-export function handleTokenExpiresAt() {
+export async function handleTokenExpiresAt() {
   const now = Date.now() / 1000;
 
   isTokenExpiresAt.value = false;
@@ -120,6 +136,6 @@ export function handleTokenExpiresAt() {
   if (tokenExpiresAt.value <= now) {
     isTokenExpiresAt.value = true;
     cancelOidcLocalStorage();
-    removeOidcUser();
+    await removeOidcUser();
   }
 }

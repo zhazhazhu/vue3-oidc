@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import { useOidc } from "../../../../src/index";
+import HelloWord from "../HelloWord.vue";
+import Public from "../Public.vue";
 import OidcCallback from "./OidcCallback";
 import OidcCallbackError from "./OidcCallbackError";
 import OidcPopupCallback from "./OidcPopupCallback";
@@ -9,7 +11,7 @@ const routes: RouteRecordRaw[] = [
     path: "/",
     name: "app",
     component: () => import("../App.vue"),
-    redirect: "/helloWord",
+    redirect: "/publicRoute",
     children: [
       {
         path: "/oidc-callback", // Needs to match redirectUri in you oidcSettings
@@ -25,15 +27,19 @@ const routes: RouteRecordRaw[] = [
         path: "/oidc-callback-error", // Needs to match redirect_uri in you oidcSettings
         name: "oidcCallbackError",
         component: OidcCallbackError,
-        meta: {
-          hidden: true,
-          isPublic: true,
-        },
       },
       {
         path: "/helloWord",
         name: "helloWord",
-        component: () => import("../HelloWord.vue"),
+        component: HelloWord,
+      },
+      {
+        path: "/publicRoute",
+        name: "publicRoute",
+        component: Public,
+        meta: {
+          isPublic: true,
+        },
       },
     ],
   },
@@ -44,13 +50,8 @@ const router = createRouter({
   history: createWebHistory(),
 });
 
-const { startOidc, hasAuthAccess, hasCallbackUri } = useOidc();
+const { oidcEffect } = useOidc();
 
-router.beforeEach(async (to, form, next) => {
-  await startOidc(to, "popup");
-  //如果isAccess or isCallback 则 next
-  if (hasAuthAccess.value || hasCallbackUri.value) next();
-  else next("/");
-});
+router.beforeEach(oidcEffect());
 
 export default router;

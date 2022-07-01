@@ -4,12 +4,12 @@ import {
   SignoutPopupArgs,
   SignoutRedirectArgs,
 } from "oidc-client-ts";
-import { RouteLocationNormalized } from "vue-router";
+import { NavigationGuardNext, RouteLocationNormalized } from "vue-router";
 import {
   cancelOidcLocalStorage,
   createSignInCallback,
-  handleStartSignIn,
   removeOidcUser,
+  startSignInEffect,
 } from "./baseHandlers";
 import {
   OidcMethodKeys,
@@ -18,11 +18,19 @@ import {
 } from "./index";
 import { userMgr } from "./variable";
 
-export async function startOidc(
-  route: RouteLocationNormalized,
-  method: OidcMethodKeys = "redirect"
+export function oidcEffect(
+  method: OidcMethodKeys = "redirect",
+  args?: SigninRedirectArgs | SigninPopupArgs
 ) {
-  await handleStartSignIn(route, method);
+  return async (
+    to: RouteLocationNormalized,
+    form: RouteLocationNormalized,
+    next: NavigationGuardNext
+  ) => {
+    const isNext = await startSignInEffect(method, { to, form, next }, args);
+
+    if (isNext) next();
+  };
 }
 
 export async function signInRedirectCallback(url?: string) {
@@ -44,26 +52,18 @@ export async function signOut(
   method: OidcSignoutMethodKeys,
   args?: SignoutRedirectArgs | SignoutPopupArgs
 ) {
+  debugger;
   cancelOidcLocalStorage();
   await removeOidcUser();
-  // await userMgr.value?.signoutPopup(args);
   await userMgr.value?.[method](args);
 }
 
-export async function signinRedirect(
-  route: RouteLocationNormalized,
-  method: OidcMethodKeys = "redirect",
-  args?: SigninRedirectArgs
-) {
-  await handleStartSignIn(route, method, args);
+export async function signinRedirect(args?: SigninRedirectArgs) {
+  await signIn("signinRedirect", args);
 }
 
-export async function signInPopup(
-  route: RouteLocationNormalized,
-  method: OidcMethodKeys = "popup",
-  args?: SigninPopupArgs
-) {
-  await handleStartSignIn(route, method, args);
+export async function signInPopup(args?: SigninPopupArgs) {
+  await signIn("signinPopup", args);
 }
 
 export async function signOutRedirect(args?: SignoutRedirectArgs) {

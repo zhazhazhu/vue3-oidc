@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useRoute } from "vue-router";
 import { useOidc } from "../../../src/index";
 
 const {
@@ -13,13 +12,12 @@ const {
   isTokenExpiresAt,
 } = useOidc();
 
-const route = useRoute();
 const handleSignin = async () => {
-  await signInPopup(route);
+  await signinRedirect();
 };
 
 const handleSignOut = async () => {
-  await signOut({});
+  await signOut();
 };
 
 const getUserInfo = () => {
@@ -34,10 +32,15 @@ const getUserInfo = () => {
 </script>
 
 <template>
-  <div>helloWord</div>
-  <button @click="handleSignin">signin</button>
-  <button @click="handleSignOut">signOut</button>
-  <button @click="getUserInfo">userInfo</button>
+  <div>
+    <div>Hello Vue3-Oidc</div>
+    <router-link to="/publicRoute">Go Public Route</router-link>
+  </div>
+  <div>
+    <button @click="handleSignin">signin</button>
+    <button @click="handleSignOut">signOut</button>
+    <button @click="getUserInfo">userInfo</button>
+  </div>
 </template>
 
 <style lang="less" scoped></style>

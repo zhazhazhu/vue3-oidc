@@ -71,3 +71,5 @@ export const isTokenExpiresAt = ref(false);
 export const oidcMethodMap = ref<OidcMethodMap>(new Map());
 
 export const oidcToken = ref<string | null>(null);
+
+export const isPublicRoute = ref(false);

@@ -7,10 +7,10 @@ import {
   UserProfile,
 } from "oidc-client-ts";
 import { Ref } from "vue";
-import { RouteLocationNormalized } from "vue-router";
-import { OidcSettings, OidcStart } from "../types";
+import { OidcEffect, OidcSettings } from "../types";
 import { mergeOidcSettings, removeOidcUser, setOidcUser } from "./baseHandlers";
 import {
+  oidcEffect,
   signIn,
   signInPopup,
   signInPopupCallback,
@@ -18,7 +18,6 @@ import {
   signInRedirectCallback,
   signOut,
   signOutRedirect,
-  startOidc,
 } from "./oidc";
 import { setupReflectStorage } from "./reflectStorage";
 import {
@@ -70,17 +69,9 @@ export interface UseOidcReturnType {
   hasAuthAccess: Ref<boolean>;
   hasCallbackUri: Ref<boolean>;
   oidcUser: Ref<User | null | undefined>;
-  startOidc: OidcStart;
-  signinRedirect: (
-    route: RouteLocationNormalized,
-    method?: OidcMethodKeys,
-    args?: SigninRedirectArgs
-  ) => Promise<void>;
-  signInPopup: (
-    route: RouteLocationNormalized,
-    method?: OidcMethodKeys,
-    args?: SigninPopupArgs
-  ) => Promise<void>;
+  oidcEffect: OidcEffect;
+  signinRedirect: (args?: SigninRedirectArgs) => Promise<void>;
+  signInPopup: (args?: SigninPopupArgs) => Promise<void>;
   signInRedirectCallback: (url?: string) => Promise<Ref<string>>;
   signInPopupCallback: (url?: string) => Promise<Ref<string>>;
   signOut: (args?: SignoutRedirectArgs) => Promise<void>;
@@ -119,7 +110,7 @@ export function useOidc(): UseOidcReturnType {
     hasAuthAccess,
     hasCallbackUri,
     oidcUser,
-    startOidc,
+    oidcEffect,
     signinRedirect,
     signInPopup,
     signInRedirectCallback,
