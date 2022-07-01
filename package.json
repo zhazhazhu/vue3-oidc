@@ -18,7 +18,8 @@
     "typescript": "^4.7.4",
     "vite": "^2.9.13",
     "vitest": "^0.16.0",
-    "vue": "^3.2.37"
+    "vue": "^3.2.37",
+    "vue-router": "^4.0.16"
   },
   "dependencies": {
     "oidc-client-ts": "^2.0.5"

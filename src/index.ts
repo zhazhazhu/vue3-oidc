@@ -1,39 +1,141 @@
-import { User, UserManager } from "oidc-client-ts";
+import {
+  SigninPopupArgs,
+  SigninRedirectArgs,
+  SignoutRedirectArgs,
+  User,
+  UserManager,
+  UserProfile,
+} from "oidc-client-ts";
 import { Ref } from "vue";
-import { OidcSettings } from "../types";
-import { startOidc } from "./oidc";
-import { useAuthenticated } from "./user";
-import { access_token, oidcSettings, oidcUser, userMgr } from "./variable";
+import { RouteLocationNormalized } from "vue-router";
+import { OidcSettings, OidcStart } from "../types";
+import { mergeOidcSettings, removeOidcUser, setOidcUser } from "./baseHandlers";
+import {
+  signIn,
+  signInPopup,
+  signInPopupCallback,
+  signinRedirect,
+  signInRedirectCallback,
+  signOut,
+  signOutRedirect,
+  startOidc,
+} from "./oidc";
+import { setupReflectStorage } from "./reflectStorage";
+import {
+  useAuthenticated,
+  useIsCallback,
+  useIsTokenExpiresAt,
+  useOidcToken,
+  useTokenExpiresAt,
+  useUser,
+  useUserInfo,
+} from "./user";
+import {
+  hasAuthAccess,
+  hasCallbackUri,
+  isTokenExpiresAt,
+  oidcMethodMap,
+  oidcSettings,
+  oidcToken,
+  oidcUser,
+  oidcUserProfile,
+  OIDC_METHODS,
+  OIDC_METHOD_KEYS,
+  OIDC_SIGNIN_METHOD_KEYS,
+  OIDC_SIGNOUT_METHOD_KEYS,
+  tokenExpiresAt,
+  userMgr,
+} from "./variable";
 
-//使用useOidc
-// const { start, isAccess, user } = useOidc();
-// await start();
+export type OidcMethodKeys = `${OIDC_METHOD_KEYS}`;
+
+export type OidcSigninMethodKeys = `${OIDC_SIGNIN_METHOD_KEYS}`;
+
+export type OidcSignoutMethodKeys = `${OIDC_SIGNOUT_METHOD_KEYS}`;
+
+export type OidcMethodMap = Map<
+  OidcMethodKeys,
+  {
+    uri: string;
+    signin: (args: SigninRedirectArgs | SigninPopupArgs) => Promise<void>;
+    signOut: (args: SigninRedirectArgs | SigninPopupArgs) => Promise<void>;
+  }
+>;
 
 export interface UseOidcReturnType {
-  start: () => void;
-  isAccess: Ref<boolean>;
+  tokenExpiresAt: Ref<number>;
+  isTokenExpiresAt: Ref<boolean>;
+  oidcToken: Ref<string | null>;
+  oidcUserProfile: Ref<UserProfile | undefined>;
+  hasAuthAccess: Ref<boolean>;
+  hasCallbackUri: Ref<boolean>;
   oidcUser: Ref<User | null | undefined>;
-  access_token: Ref<string>;
+  startOidc: OidcStart;
+  signinRedirect: (
+    route: RouteLocationNormalized,
+    method?: OidcMethodKeys,
+    args?: SigninRedirectArgs
+  ) => Promise<void>;
+  signInPopup: (
+    route: RouteLocationNormalized,
+    method?: OidcMethodKeys,
+    args?: SigninPopupArgs
+  ) => Promise<void>;
+  signInRedirectCallback: (url?: string) => Promise<Ref<string>>;
+  signInPopupCallback: (url?: string) => Promise<Ref<string>>;
+  signOut: (args?: SignoutRedirectArgs) => Promise<void>;
+  removeOidcUser: () => Promise<void>;
+  setOidcUser: (user: User) => void;
 }
 
 export function setupOidc(settings: OidcSettings) {
-  oidcSettings.value = settings;
-  userMgr.value = new UserManager(settings);
+  oidcSettings.value = mergeOidcSettings(settings);
+
+  userMgr.value = new UserManager(oidcSettings.value);
+
+  for (const k in OIDC_METHODS) {
+    const key = k as OidcMethodKeys;
+
+    oidcMethodMap.value.set(key, {
+      uri: oidcSettings.value[OIDC_METHODS[key].uriKey] || "",
+
+      signin: (args: SigninRedirectArgs | SigninPopupArgs) =>
+        signIn(OIDC_METHODS[key].signInKey, args),
+
+      signOut: (args: SigninRedirectArgs | SigninPopupArgs) =>
+        signOut(OIDC_METHODS[key].signOutKey, args),
+    });
+  }
+  //安装反应式存储
+  setupReflectStorage();
 }
 
 export function useOidc(): UseOidcReturnType {
-  //是否认证成功
-  const isAccess = useAuthenticated();
-
-  //开始身份认证
-  async function start() {
-    await startOidc();
-  }
-
   return {
-    start,
-    isAccess,
+    tokenExpiresAt,
+    isTokenExpiresAt,
+    oidcUserProfile,
+    oidcToken,
+    hasAuthAccess,
+    hasCallbackUri,
     oidcUser,
-    access_token,
+    startOidc,
+    signinRedirect,
+    signInPopup,
+    signInRedirectCallback,
+    signInPopupCallback,
+    signOut: signOutRedirect,
+    removeOidcUser,
+    setOidcUser,
   };
 }
+
+export {
+  useTokenExpiresAt,
+  useIsTokenExpiresAt,
+  useUserInfo,
+  useOidcToken,
+  useAuthenticated,
+  useIsCallback,
+  useUser,
+};
