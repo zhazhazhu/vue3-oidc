@@ -15,9 +15,10 @@ pnpm i vue3-oidc
 
 ```ts
 //main.ts
-//初始化oidc
 
-import { setupOidc } from "vue3-oidc";
+import { setupOidc, useOidc } from "vue3-oidc";
+
+const { oidcEffect } = useOidc();
 
 const oidcSettings = {
   authority: "",
@@ -29,7 +30,11 @@ const oidcSettings = {
   response_type: "code",
 };
 
+//初始化oidc
 setupOidc(oidcSettings);
+
+//创建路由中间件
+oidcEffect(router);
 ```
 
 ```ts
@@ -79,12 +84,6 @@ const router = createRouter({
   routes: routes,
   history: createWebHistory(),
 });
-
-const { oidcEffect } = useOidc();
-
-//创建路由中间件
-//oidcEffect('redirect' || 'popup') 默认 redirect
-router.beforeEach(oidcEffect());
 
 export default router;
 ```
