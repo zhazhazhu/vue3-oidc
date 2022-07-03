@@ -4,7 +4,7 @@ import {
   SignoutPopupArgs,
   SignoutRedirectArgs,
 } from "oidc-client-ts";
-import { NavigationGuardNext, RouteLocationNormalized } from "vue-router";
+import { Router } from "vue-router";
 import {
   cancelOidcLocalStorage,
   createSignInCallback,
@@ -19,18 +19,15 @@ import {
 import { userMgr } from "./variable";
 
 export function oidcEffect(
+  router: Router,
   method: OidcMethodKeys = "redirect",
   args?: SigninRedirectArgs | SigninPopupArgs
 ) {
-  return async (
-    to: RouteLocationNormalized,
-    form: RouteLocationNormalized,
-    next: NavigationGuardNext
-  ) => {
+  router.beforeEach(async (to, form, next) => {
     const isNext = await startSignInEffect(method, { to, form, next }, args);
 
     if (isNext) next();
-  };
+  });
 }
 
 export async function signInRedirectCallback(url?: string) {
