@@ -72,9 +72,11 @@ export async function startSignInEffect(
   if (!user && !isPublicRoute)
     if (origin + path !== activeOidc?.uri) {
       //判断当前路由是否是回调地址//不在则重新向到登录页
+      hasCallbackUri.value = false;
+
       await activeOidc?.signin(args || {});
 
-      hasCallbackUri.value = false;
+      hasAuthAccess.value = true;
     } else {
       hasCallbackUri.value = true;
     }

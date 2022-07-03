@@ -52,7 +52,6 @@ export async function signOut(
   method: OidcSignoutMethodKeys,
   args?: SignoutRedirectArgs | SignoutPopupArgs
 ) {
-  debugger;
   cancelOidcLocalStorage();
   await removeOidcUser();
   await userMgr.value?.[method](args);
