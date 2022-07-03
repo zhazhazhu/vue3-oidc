@@ -7,6 +7,12 @@ Library of openid connect (oidc) and oauth2 integrated by oidc client, vue3 and 
 
 > Vitest requires Vue >=v3.2.37 and vue-router >=v4.0.16
 
+## 📦 Install
+
+```bash
+pnpm i vue3-oidc
+```
+
 ```ts
 //main.ts
 //初始化oidc
@@ -81,4 +87,42 @@ const { oidcEffect } = useOidc();
 router.beforeEach(oidcEffect());
 
 export default router;
+```
+
+### API
+
+```ts
+import { useOidc } from "vue3-oidc";
+
+//useOidc()
+export interface UseOidcReturnType {
+  //token-expiresAt
+  tokenExpiresAt: Ref<number>;
+  //access token has expiresAt
+  isTokenExpiresAt: Ref<boolean>;
+  //access-token
+  oidcToken: Ref<string | null>;
+  //user-info
+  oidcUserProfile: Ref<UserProfile | undefined>;
+  hasAuthAccess: Ref<boolean>;
+  hasCallbackUri: Ref<boolean>;
+  oidcUser: Ref<User | null | undefined>;
+  //router Middleware
+  oidcEffect: OidcEffect;
+  signinRedirect: (args?: SigninRedirectArgs) => Promise<void>;
+  signInPopup: (args?: SigninPopupArgs) => Promise<void>;
+  signInRedirectCallback: (url?: string) => Promise<Ref<string>>;
+  signInPopupCallback: (url?: string) => Promise<Ref<string>>;
+  signOut: (args?: SignoutRedirectArgs) => Promise<void>;
+  removeOidcUser: () => Promise<void>;
+  setOidcUser: (user: User) => void;
+}
+
+useTokenExpiresAt: Ref<number>
+useIsTokenExpiresAt: Ref<boolean>
+useUserInfo: Ref<UserProfile | null>
+useOidcToken: Ref<string | null>
+useAuthenticated: Ref<boolean>
+useIsCallback: Ref<boolean>
+useUser: Ref<User | null>
 ```
