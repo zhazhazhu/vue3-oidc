@@ -1,14 +1,27 @@
 {
   "name": "vue3-oidc",
   "version": "0.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "vue3-oidc",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "types"
+  ],
   "packageManager": "pnpm@7.0.0",
   "scripts": {
     "dev": "tsup --watch src",
-    "build": "tsup"
+    "build": "tsup",
+    "patch": "npm version patch && npm publish",
+    "minor": "npm version minor && npm publish",
+    "major": "npm version major && npm publish"
   },
-  "keywords": [],
+  "keywords": [
+    "vue3-oidc",
+    "oidc-client",
+    "oidc"
+  ],
   "author": "zhazhazhu",
   "license": "ISC",
   "devDependencies": {
@@ -22,5 +35,21 @@
   },
   "dependencies": {
     "oidc-client-ts": "^2.0.5"
+  },
+  "peerDependencies": {
+    "vue": ">=3.2.37",
+    "vue-router": ">=4.0.16"
+  },
+  "peerDependenciesMeta": {
+    "vue": {
+      "optional": true
+    },
+    "vue-router": {
+      "optional": true
+    }
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
   }
 }
