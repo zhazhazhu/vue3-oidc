@@ -1,6 +1,6 @@
 import { defineComponent, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { useOidc } from "../../../../src/index";
+import { useOidc } from "vue3-oidc";
 
 export default defineComponent({
   setup() {

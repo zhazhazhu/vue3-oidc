@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import { useOidc } from "../../../../src/index";
+import { useOidc } from "../../../../dist/index";
 import HelloWord from "../HelloWord.vue";
 import Public from "../Public.vue";
 import OidcCallback from "./OidcCallback";

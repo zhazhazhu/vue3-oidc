@@ -16,6 +16,7 @@
     "vue": "*"
   },
   "dependencies": {
-    "vue-router": "^4.0.16"
+    "vue-router": "^4.0.16",
+    "vue3-oidc": "workspace:*"
   }
 }

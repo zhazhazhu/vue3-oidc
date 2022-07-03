@@ -7,7 +7,8 @@ import {
   UserProfile,
 } from "oidc-client-ts";
 import { Ref } from "vue";
-import { OidcEffect, OidcSettings } from "../types";
+import { NavigationGuardNext, RouteLocationNormalized } from "vue-router";
+import { OidcSettings } from "../types";
 import { mergeOidcSettings, removeOidcUser, setOidcUser } from "./baseHandlers";
 import {
   oidcEffect,
@@ -51,6 +52,15 @@ export type OidcMethodKeys = `${OIDC_METHOD_KEYS}`;
 export type OidcSigninMethodKeys = `${OIDC_SIGNIN_METHOD_KEYS}`;
 
 export type OidcSignoutMethodKeys = `${OIDC_SIGNOUT_METHOD_KEYS}`;
+
+export type OidcEffect = (
+  method: OidcMethodKeys,
+  args?: SigninRedirectArgs | SigninPopupArgs
+) => (
+  to: RouteLocationNormalized,
+  form: RouteLocationNormalized,
+  next: NavigationGuardNext
+) => Promise<void>;
 
 export type OidcMethodMap = Map<
   OidcMethodKeys,

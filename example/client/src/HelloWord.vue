@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useOidc } from "../../../src/index";
+import { useOidc } from "vue3-oidc";
 
 const {
   signinRedirect,
