@@ -24,6 +24,9 @@
   ],
   "author": "zhazhazhu",
   "license": "ISC",
+  "repository": {
+    "url": "https://github.com/zhazhazhu/vue3-oidc"
+  },
   "devDependencies": {
     "@types/node": "^18.0.0",
     "tsup": "^6.1.2",
