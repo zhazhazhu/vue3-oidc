@@ -68,14 +68,15 @@ export type OidcMethodMap = Map<
   }
 >;
 
-export interface UseOidcReturnType {
+export interface UseOidcReturnType<T = UserProfile> {
   tokenExpiresAt: Ref<number>;
   isTokenExpiresAt: Ref<boolean>;
   oidcToken: Ref<string | null>;
-  oidcUserProfile: Ref<UserProfile | undefined>;
+  oidcUserProfile: Ref<T>;
   hasAuthAccess: Ref<boolean>;
   hasCallbackUri: Ref<boolean>;
   oidcUser: Ref<User | null | undefined>;
+  userMgr: Ref<UserManager | undefined>;
   oidcEffect: OidcEffect;
   signinRedirect: (args?: SigninRedirectArgs) => Promise<void>;
   signInPopup: (args?: SigninPopupArgs) => Promise<void>;
@@ -108,7 +109,7 @@ export function setupOidc(settings: OidcSettings) {
   setupReflectStorage();
 }
 
-export function useOidc(): UseOidcReturnType {
+export function useOidc<T>(): UseOidcReturnType<T> {
   return {
     tokenExpiresAt,
     isTokenExpiresAt,
@@ -117,6 +118,7 @@ export function useOidc(): UseOidcReturnType {
     hasAuthAccess,
     hasCallbackUri,
     oidcUser,
+    userMgr,
     oidcEffect,
     signinRedirect,
     signInPopup,

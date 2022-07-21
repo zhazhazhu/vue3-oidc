@@ -1,4 +1,4 @@
-import { User, UserManager, UserProfile } from "oidc-client-ts";
+import { User, UserManager } from "oidc-client-ts";
 import { ref } from "vue";
 import { OidcSettings } from "../types";
 import { OidcMethodMap } from "./index";
@@ -51,7 +51,7 @@ export const userMgr = ref<UserManager>();
 
 export const oidcUser = ref<User | null>();
 
-export const oidcUserProfile = ref<UserProfile>();
+export const oidcUserProfile = ref();
 
 //是否具有身份认证
 export const hasAuthAccess = ref(false);
