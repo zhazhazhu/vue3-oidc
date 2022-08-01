@@ -9,6 +9,14 @@
     "dist",
     "types"
   ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./types/*": "./types/*.d.ts"
+  },
   "packageManager": "pnpm@7.0.0",
   "scripts": {
     "dev": "tsup --watch src",
