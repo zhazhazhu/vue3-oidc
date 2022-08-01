@@ -10,7 +10,7 @@ import {
   userMgr,
 } from "./variable";
 
-export const useOidcUser = async () => await userMgr.value?.getUser();
+export const useOidcUser = async () => await userMgr.value!.getUser();
 
 export const useUserInfo = () => oidcUserProfile;
 

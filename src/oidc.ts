@@ -9,6 +9,7 @@ import {
   cancelOidcLocalStorage,
   createSignInCallback,
   removeOidcUser,
+  setOidcUser,
   startSignInEffect,
 } from "./baseHandlers";
 import {
@@ -16,7 +17,8 @@ import {
   OidcSigninMethodKeys,
   OidcSignoutMethodKeys,
 } from "./index";
-import { userMgr } from "./variable";
+import { useOidcUser } from "./user";
+import { hasAuthAccess, userMgr } from "./variable";
 
 export function oidcEffect(
   router: Router,
@@ -42,7 +44,13 @@ export async function signIn(
   method: OidcSigninMethodKeys,
   args?: SigninRedirectArgs | SigninPopupArgs
 ) {
-  await userMgr.value?.[method](args);
+  userMgr.value?.[method](args);
+
+  hasAuthAccess.value = true;
+
+  const user = await useOidcUser();
+
+  setOidcUser(user);
 }
 
 export async function signOut(

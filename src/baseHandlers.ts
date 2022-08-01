@@ -123,10 +123,10 @@ export async function removeOidcUser() {
   oidcToken.value = null;
 }
 
-export function setOidcUser(user: User) {
+export function setOidcUser(user: User | null) {
   oidcUser.value = user;
   oidcUserProfile.value = user?.profile;
-  oidcToken.value = user?.access_token;
+  oidcToken.value = user?.access_token || null;
   tokenExpiresAt.value = oidcUser.value?.expires_at || Date.now() + 1000;
 }
 
