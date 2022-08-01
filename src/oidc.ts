@@ -44,13 +44,14 @@ export async function signIn(
   method: OidcSigninMethodKeys,
   args?: SigninRedirectArgs | SigninPopupArgs
 ) {
-  userMgr.value?.[method](args);
-
-  hasAuthAccess.value = true;
-
   const user = await useOidcUser();
 
-  setOidcUser(user);
+  if (user) {
+    setOidcUser(user);
+    hasAuthAccess.value = true;
+  }
+
+  userMgr.value?.[method](args);
 }
 
 export async function signOut(
