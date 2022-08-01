@@ -1,6 +1,6 @@
 {
   "name": "vue3-oidc",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "vue3-oidc",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
