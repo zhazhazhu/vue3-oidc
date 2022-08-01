@@ -17,8 +17,8 @@ import {
   OidcSigninMethodKeys,
   OidcSignoutMethodKeys,
 } from "./index";
-import { useOidcUser } from "./user";
-import { hasAuthAccess, userMgr } from "./variable";
+import { hasAuthParams } from "./route";
+import { hasAuthAccess, oidcToken, userMgr } from "./variable";
 
 export function oidcEffect(
   router: Router,
@@ -44,14 +44,21 @@ export async function signIn(
   method: OidcSigninMethodKeys,
   args?: SigninRedirectArgs | SigninPopupArgs
 ) {
-  const user = await useOidcUser();
-
-  if (user) {
-    setOidcUser(user);
+  if (oidcToken.value) {
+    const user = await userMgr.value?.getUser();
+    setOidcUser(user!);
     hasAuthAccess.value = true;
   }
-
-  userMgr.value?.[method](args);
+  if (!hasAuthAccess.value && !hasAuthParams()) {
+    await userMgr.value?.[method](args);
+    return false;
+  }
+  if (!hasAuthAccess.value && hasAuthParams()) {
+    const user = await userMgr.value?.signinCallback();
+    setOidcUser(user!);
+    hasAuthAccess.value = true;
+    return true;
+  }
 }
 
 export async function signOut(
@@ -63,12 +70,20 @@ export async function signOut(
   await userMgr.value?.[method](args);
 }
 
-export async function signinRedirect(args?: SigninRedirectArgs) {
-  await signIn("signinRedirect", args);
+export async function signinRedirect(cb?: Function, args?: SigninRedirectArgs) {
+  const pass = await signIn("signinRedirect", args);
+
+  if (pass) {
+    cb?.();
+  }
 }
 
-export async function signInPopup(args?: SigninPopupArgs) {
-  await signIn("signinPopup", args);
+export async function signInPopup(cb?: Function, args?: SigninPopupArgs) {
+  const pass = await signIn("signinPopup", args);
+
+  if (pass) {
+    cb?.();
+  }
 }
 
 export async function signOutRedirect(args?: SignoutRedirectArgs) {

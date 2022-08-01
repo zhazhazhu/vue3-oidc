@@ -74,7 +74,7 @@ export async function startSignInEffect(
       //判断当前路由是否是回调地址//不在则重新向到登录页
       hasCallbackUri.value = false;
 
-      await activeOidc?.signin(args || {});
+      await activeOidc?.signin(undefined, args || {});
 
       hasAuthAccess.value = true;
     } else {
@@ -99,6 +99,10 @@ const inlineOidcSettings: PartialOidcSettings = {
 
 export function mergeOidcSettings(settings: OidcSettings) {
   return Object.assign(inlineOidcSettings, settings);
+}
+
+export function getLocalStorage(key: string) {
+  return localStorage.getItem(key);
 }
 
 export function createLocalStorage(key: string, data: string) {
