@@ -20,7 +20,7 @@ import {
   signOut,
   signOutRedirect,
 } from "./oidc";
-import { setupReflectStorage } from "./reflectStorage";
+import { setupLocationState, setupReflectStorage } from "./reflectStorage";
 import {
   useAuthenticated,
   useIsCallback,
@@ -63,7 +63,10 @@ export type OidcMethodMap = Map<
   OidcMethodKeys,
   {
     uri: string;
-    signin: (args: SigninRedirectArgs | SigninPopupArgs) => Promise<void>;
+    signin: (
+      cb?: Function,
+      args?: SigninRedirectArgs | SigninPopupArgs
+    ) => Promise<void>;
     signOut: (args: SigninRedirectArgs | SigninPopupArgs) => Promise<void>;
   }
 >;
@@ -78,8 +81,8 @@ export interface UseOidcReturnType<T = UserProfile> {
   oidcUser: Ref<User | null | undefined>;
   userMgr: Ref<UserManager | undefined>;
   oidcEffect: OidcEffect;
-  signinRedirect: (args?: SigninRedirectArgs) => Promise<void>;
-  signInPopup: (args?: SigninPopupArgs) => Promise<void>;
+  signinRedirect: (cb: Function, args?: SigninRedirectArgs) => Promise<void>;
+  signInPopup: (cb: Function, args?: SigninPopupArgs) => Promise<void>;
   signInRedirectCallback: (url?: string) => Promise<Ref<string>>;
   signInPopupCallback: (url?: string) => Promise<Ref<string>>;
   signOut: (args?: SignoutRedirectArgs) => Promise<void>;
@@ -98,13 +101,24 @@ export function setupOidc(settings: OidcSettings) {
     oidcMethodMap.value.set(key, {
       uri: oidcSettings.value[OIDC_METHODS[key].uriKey] || "",
 
-      signin: (args: SigninRedirectArgs | SigninPopupArgs) =>
-        signIn(OIDC_METHODS[key].signInKey, args),
+      signin: async (
+        cb?: Function,
+        args?: SigninRedirectArgs | SigninPopupArgs
+      ) => {
+        const pass = await signIn(OIDC_METHODS[key].signInKey, args);
 
-      signOut: (args: SigninRedirectArgs | SigninPopupArgs) =>
-        signOut(OIDC_METHODS[key].signOutKey, args),
+        if (pass) {
+          cb?.();
+        }
+      },
+
+      signOut: async (args: SigninRedirectArgs | SigninPopupArgs) => {
+        await signOut(OIDC_METHODS[key].signOutKey, args);
+      },
     });
   }
+  //初始化本地状态
+  setupLocationState();
   //安装反应式存储
   setupReflectStorage();
 }

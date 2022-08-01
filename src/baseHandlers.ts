@@ -74,7 +74,7 @@ export async function startSignInEffect(
       //判断当前路由是否是回调地址//不在则重新向到登录页
       hasCallbackUri.value = false;
 
-      await activeOidc?.signin(args || {});
+      await activeOidc?.signin(undefined, args || {});
 
       hasAuthAccess.value = true;
     } else {
@@ -101,6 +101,10 @@ export function mergeOidcSettings(settings: OidcSettings) {
   return Object.assign(inlineOidcSettings, settings);
 }
 
+export function getLocalStorage(key: string) {
+  return localStorage.getItem(key);
+}
+
 export function createLocalStorage(key: string, data: string) {
   window.localStorage.setItem(key, data);
 }
@@ -123,10 +127,10 @@ export async function removeOidcUser() {
   oidcToken.value = null;
 }
 
-export function setOidcUser(user: User) {
+export function setOidcUser(user: User | null) {
   oidcUser.value = user;
   oidcUserProfile.value = user?.profile;
-  oidcToken.value = user?.access_token;
+  oidcToken.value = user?.access_token || null;
   tokenExpiresAt.value = oidcUser.value?.expires_at || Date.now() + 1000;
 }
 

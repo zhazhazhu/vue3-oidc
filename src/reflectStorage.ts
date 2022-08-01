@@ -1,5 +1,5 @@
 import { ref, watchEffect } from "vue";
-import { createLocalStorage } from "./baseHandlers";
+import { createLocalStorage, getLocalStorage } from "./baseHandlers";
 import { oidcCallbackUri, oidcToken, oidcUser, VARIABLE } from "./variable";
 
 const isEffect = ref(true);
@@ -11,10 +11,7 @@ export function setupReflectStorage() {
   //储存本地callback
   watchEffect(() => {
     if (!oidcCallbackUri.value) return;
-    createLocalStorage(
-      VARIABLE.OIDC_CALLBACK_URI,
-      JSON.stringify(oidcCallbackUri.value)
-    );
+    createLocalStorage(VARIABLE.OIDC_CALLBACK_URI, oidcCallbackUri.value);
   });
 
   //储存本地User
@@ -29,9 +26,16 @@ export function setupReflectStorage() {
 
   watchEffect(() => {
     if (!oidcToken.value) return;
-    createLocalStorage(
-      VARIABLE.OIDC_ACCESS_TOKEN,
-      JSON.stringify(oidcToken.value)
-    );
+    createLocalStorage(VARIABLE.OIDC_ACCESS_TOKEN, oidcToken.value);
   });
+}
+
+export function setupLocationState() {
+  oidcCallbackUri.value = getLocalStorage(VARIABLE.OIDC_CALLBACK_URI) || "/";
+
+  oidcUser.value = getLocalStorage(VARIABLE.OIDC_CLIENT_USER)
+    ? JSON.parse(getLocalStorage(VARIABLE.OIDC_CLIENT_USER) || "")
+    : null;
+
+  oidcToken.value = getLocalStorage(VARIABLE.OIDC_ACCESS_TOKEN);
 }
