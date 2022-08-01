@@ -1,5 +1,5 @@
 import { ref, watchEffect } from "vue";
-import { createLocalStorage } from "./baseHandlers";
+import { createLocalStorage, getLocalStorage } from "./baseHandlers";
 import { oidcCallbackUri, oidcToken, oidcUser, VARIABLE } from "./variable";
 
 const isEffect = ref(true);
@@ -34,4 +34,16 @@ export function setupReflectStorage() {
       JSON.stringify(oidcToken.value)
     );
   });
+}
+
+export function setupLocationState() {
+  oidcCallbackUri.value = JSON.parse(
+    getLocalStorage(VARIABLE.OIDC_CALLBACK_URI) || ""
+  );
+
+  oidcUser.value = JSON.parse(getLocalStorage(VARIABLE.OIDC_CLIENT_USER) || "");
+
+  oidcToken.value = JSON.parse(
+    getLocalStorage(VARIABLE.OIDC_ACCESS_TOKEN) || ""
+  );
 }
