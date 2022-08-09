@@ -1,6 +1,6 @@
 {
   "name": "vue3-oidc",
-  "version": "0.0.12",
+  "version": "0.0.1",
   "description": "vue3-oidc",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -45,11 +45,12 @@
     "vue-router": "^4.0.16"
   },
   "dependencies": {
-    "oidc-client-ts": "^2.0.5"
+    "oidc-client-ts": "^2.0.5",
+    "vue": ">=3.0.0"
   },
   "peerDependencies": {
-    "vue": ">=3.2.37",
-    "vue-router": ">=4.0.16"
+    "vue": ">=3.0.0",
+    "vue-router": ">=4.0.0"
   },
   "peerDependenciesMeta": {
     "vue": {
