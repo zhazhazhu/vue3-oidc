@@ -1,14 +1,12 @@
-import { defineComponent, onMounted } from "vue";
-import { useRouter } from "vue-router";
-import { useOidc } from "vue3-oidc";
+import { defineComponent, watchEffect } from "vue";
 
 export default defineComponent({
   setup() {
-    const router = useRouter();
-    onMounted(async () => {
-      const { signInRedirectCallback } = useOidc();
-      const callbackUri = await signInRedirectCallback();
-      router.push(callbackUri.value);
+    // const route = useRoute();
+    watchEffect(async () => {
+      // const user1 = await state.userManager?.signinRedirectCallback();
+      // const user = await state.userManager?.getUser();
+      // router.push("/helloWord");
     });
     return () => (
       <>

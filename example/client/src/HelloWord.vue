@@ -1,33 +1,25 @@
 <script lang="ts" setup>
-import { useOidc } from "vue3-oidc";
+import { unref } from "vue";
+import { useRouter } from "vue-router";
+import { useAuth, useOidcStore } from "vue3-oidc";
 
-const {
-  signinRedirect,
-  signInPopup,
-  signOut,
-  oidcUser,
-  oidcUserProfile,
-  oidcToken,
-  tokenExpiresAt,
-  isTokenExpiresAt,
-} = useOidc();
+const { state } = useOidcStore();
+const router = useRouter();
 
-const handleSignin = async () => {
+const { signinRedirect } = useAuth();
+
+const handleSignIn = async () => {
   await signinRedirect();
 };
 
-const handleSignOut = async () => {
-  await signOut();
+const handleSignOut = () => {
+  unref(state).userManager?.signoutRedirect();
 };
 
-const getUserInfo = () => {
-  console.log(
-    oidcUser.value,
-    oidcUserProfile.value,
-    oidcToken.value,
-    tokenExpiresAt.value,
-    isTokenExpiresAt.value
-  );
+const getUser = async () => {};
+
+const routerPush = () => {
+  router.push("/");
 };
 </script>
 
@@ -37,9 +29,10 @@ const getUserInfo = () => {
     <router-link to="/publicRoute">Go Public Route</router-link>
   </div>
   <div>
-    <button @click="handleSignin">signin</button>
+    <button @click="handleSignIn">signIn</button>
     <button @click="handleSignOut">signOut</button>
-    <button @click="getUserInfo">userInfo</button>
+    <button @click="getUser">getUser</button>
+    <button @click="routerPush">router</button>
   </div>
 </template>
 
