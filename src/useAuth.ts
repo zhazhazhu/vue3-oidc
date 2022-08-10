@@ -19,7 +19,7 @@ function signinRedirect(arg?: SigninRedirectArgs) {
   }
 }
 
-function signoutRedirect(arg: SignoutRedirectArgs) {
+function signoutRedirect(arg?: SignoutRedirectArgs) {
   unref(state).userManager?.signoutRedirect(arg);
 }
 
@@ -44,8 +44,14 @@ async function autoAuthenticate() {
     unref(actions).setUser(user!);
     return;
   }
+  //if the user and pathCallback of true, then we can set the user
   if (user && !isPathOfCallback()) {
     unref(actions).setUser(user);
+    //if the user has expired, then we can remove the user
+    if (unref(state).hasExpiresAt) {
+      await signoutRedirect();
+      return;
+    }
     return;
   }
 }

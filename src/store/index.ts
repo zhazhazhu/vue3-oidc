@@ -16,6 +16,7 @@ export interface OidcState {
   userManager: MaybeNull<UserManager>;
   user: MaybeNull<User>;
   token: ComputedRef<string | null>;
+  hasExpiresAt: ComputedRef<boolean>;
 }
 
 export interface OidcActions {
@@ -28,19 +29,26 @@ const state: UnwrapNestedRefs<OidcState> = reactive<OidcState>({
   userManager: null,
   user: null,
   token: computed(() => state.user?.access_token || null),
+  hasExpiresAt: computed(
+    () => Date.now() / 1000 > state.user?.expires_at! || false
+  ),
 });
 
 const actions: OidcActions = {
   setUser(user: User) {
     state.user = user;
   },
-  removeUser() {
-    state.userManager;
+  async removeUser() {
+    state.user = null;
+    await state.userManager?.removeUser();
   },
 };
 
 export interface CreateOidcOptions {
   oidcSettings: VueOidcSettings;
+  /**
+   * whether open autoAuthenticate
+   */
   auth?: boolean;
 }
 
