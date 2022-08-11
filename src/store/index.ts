@@ -1,8 +1,6 @@
 import { MaybeNull } from "@/types";
 import { OidcClientSettings, User, UserManager } from "oidc-client-ts";
 import { computed, ComputedRef, reactive, UnwrapNestedRefs } from "vue";
-import { useAuth } from "../useAuth";
-import { inlineOidcEvents } from "./events";
 
 export interface VueOidcSettings extends OidcClientSettings {
   /**
@@ -43,29 +41,6 @@ const actions: OidcActions = {
     await state.userManager?.removeUser();
   },
 };
-
-export interface CreateOidcOptions {
-  oidcSettings: VueOidcSettings;
-  /**
-   * whether open autoAuthenticate
-   */
-  auth?: boolean;
-}
-
-export function createOidc(options: CreateOidcOptions) {
-  const { oidcSettings, auth } = options;
-
-  state.oidcSettings = oidcSettings;
-  state.userManager = new UserManager(oidcSettings);
-  //add event listeners to the oidc client
-  Object.keys(inlineOidcEvents).forEach((key) => {
-    state.userManager!.events[key](inlineOidcEvents[key]);
-  });
-
-  const { autoAuthenticate } = useAuth();
-
-  if (auth && autoAuthenticate) autoAuthenticate();
-}
 
 export function useOidcStore(): {
   state: ComputedRef<UnwrapNestedRefs<OidcState>>;
