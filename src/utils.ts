@@ -1,15 +1,10 @@
-import { RouteLocationNormalized } from "vue-router";
-import { isPublicRoute } from "./variable";
-
-export const hasPublicRoute = (route: RouteLocationNormalized) => {
-  isPublicRoute.value = route.meta?.isPublic ? true : false;
-  return isPublicRoute.value;
-};
-
 /**
- * @public
+ *  @fn isPathOfCallback
+ *  @brief Checks if the path is a callback path
  */
-export const hasAuthParams = (location = window.location): boolean => {
+export function isPathOfCallback(
+  location: Location = window.location
+): boolean {
   // response_mode: query
   let searchParams = new URLSearchParams(location.search);
   if (
@@ -29,4 +24,4 @@ export const hasAuthParams = (location = window.location): boolean => {
   }
 
   return false;
-};
+}

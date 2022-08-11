@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "target": "esnext",
+    "target": "ESNext",
     "useDefineForClassFields": true,
-    "module": "esnext",
+    "module": "CommonJS",
     "moduleResolution": "node",
     "strict": true,
     "jsx": "preserve",
@@ -10,15 +10,13 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "baseUrl": ".",
-    "paths": {
-      "@/*": [
-        "src/*"
-      ],
-    },
     "skipLibCheck": true,
     "lib": [
       "esnext",
       "dom"
+    ],
+    "types": [
+      "node"
     ],
     "noImplicitAny": false
   },

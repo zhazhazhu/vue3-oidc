@@ -1,6 +1,6 @@
 {
   "name": "vue3-oidc",
-  "version": "0.0.12",
+  "version": "0.0.1",
   "description": "vue3-oidc",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -41,21 +41,17 @@
     "typescript": "^4.7.4",
     "vite": "^2.9.13",
     "vitest": "^0.16.0",
-    "vue": "^3.2.37",
-    "vue-router": "^4.0.16"
+    "vue": "^3.2.37"
   },
   "dependencies": {
-    "oidc-client-ts": "^2.0.5"
+    "oidc-client-ts": "^2.0.5",
+    "vue": ">=3.0.0"
   },
   "peerDependencies": {
-    "vue": ">=3.2.37",
-    "vue-router": ">=4.0.16"
+    "vue": ">=3.0.0"
   },
   "peerDependenciesMeta": {
     "vue": {
-      "optional": true
-    },
-    "vue-router": {
       "optional": true
     }
   },

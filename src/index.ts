@@ -1,155 +1,35 @@
-import {
-  SigninPopupArgs,
-  SigninRedirectArgs,
-  SignoutRedirectArgs,
-  User,
-  UserManager,
-  UserProfile,
-} from "oidc-client-ts";
-import { Ref } from "vue";
-import { Router } from "vue-router";
-import { OidcSettings } from "../types";
-import { mergeOidcSettings, removeOidcUser, setOidcUser } from "./baseHandlers";
-import {
-  oidcEffect,
-  signIn,
-  signInPopup,
-  signInPopupCallback,
-  signinRedirect,
-  signInRedirectCallback,
-  signOut,
-  signOutRedirect,
-} from "./oidc";
-import { setupLocationState, setupReflectStorage } from "./reflectStorage";
-import {
-  useAuthenticated,
-  useIsCallback,
-  useIsTokenExpiresAt,
-  useOidcToken,
-  useTokenExpiresAt,
-  useUser,
-  useUserInfo,
-} from "./user";
-import {
-  hasAuthAccess,
-  hasCallbackUri,
-  isTokenExpiresAt,
-  oidcMethodMap,
-  oidcSettings,
-  oidcToken,
-  oidcUser,
-  oidcUserProfile,
-  OIDC_METHODS,
-  OIDC_METHOD_KEYS,
-  OIDC_SIGNIN_METHOD_KEYS,
-  OIDC_SIGNOUT_METHOD_KEYS,
-  tokenExpiresAt,
-  userMgr,
-} from "./variable";
+import { UserManager } from "oidc-client-ts";
+import { unref } from "vue";
+import { useOidcStore } from "./store";
+import { inlineOidcEvents } from "./store/events";
+import { VueOidcSettings } from "./store/index";
+import { useAuth } from "./useAuth";
 
-export type OidcMethodKeys = `${OIDC_METHOD_KEYS}`;
+const { state } = useOidcStore();
 
-export type OidcSigninMethodKeys = `${OIDC_SIGNIN_METHOD_KEYS}`;
-
-export type OidcSignoutMethodKeys = `${OIDC_SIGNOUT_METHOD_KEYS}`;
-
-export type OidcEffect = (
-  router: Router,
-  method?: OidcMethodKeys,
-  args?: SigninRedirectArgs | SigninPopupArgs
-) => void;
-
-export type OidcMethodMap = Map<
-  OidcMethodKeys,
-  {
-    uri: string;
-    signin: (
-      cb?: Function,
-      args?: SigninRedirectArgs | SigninPopupArgs
-    ) => Promise<void>;
-    signOut: (args: SigninRedirectArgs | SigninPopupArgs) => Promise<void>;
-  }
->;
-
-export interface UseOidcReturnType<T = UserProfile> {
-  tokenExpiresAt: Ref<number>;
-  isTokenExpiresAt: Ref<boolean>;
-  oidcToken: Ref<string | null>;
-  oidcUserProfile: Ref<T>;
-  hasAuthAccess: Ref<boolean>;
-  hasCallbackUri: Ref<boolean>;
-  oidcUser: Ref<User | null | undefined>;
-  userMgr: Ref<UserManager | undefined>;
-  oidcEffect: OidcEffect;
-  signinRedirect: (cb: Function, args?: SigninRedirectArgs) => Promise<void>;
-  signInPopup: (cb: Function, args?: SigninPopupArgs) => Promise<void>;
-  signInRedirectCallback: (url?: string) => Promise<Ref<string>>;
-  signInPopupCallback: (url?: string) => Promise<Ref<string>>;
-  signOut: (args?: SignoutRedirectArgs) => Promise<void>;
-  removeOidcUser: () => Promise<void>;
-  setOidcUser: (user: User) => void;
+export interface CreateOidcOptions {
+  oidcSettings: VueOidcSettings;
+  /**
+   * whether open autoAuthenticate
+   */
+  auth?: boolean;
 }
 
-export function setupOidc(settings: OidcSettings) {
-  oidcSettings.value = mergeOidcSettings(settings);
+export function createOidc(options: CreateOidcOptions) {
+  const { oidcSettings, auth } = options;
 
-  userMgr.value = new UserManager(oidcSettings.value);
+  unref(state).oidcSettings = oidcSettings;
+  unref(state).userManager = new UserManager(oidcSettings);
+  //add event listeners to the oidc client
+  Object.keys(inlineOidcEvents).forEach((key) => {
+    unref(state).userManager!.events[key](inlineOidcEvents[key]);
+  });
 
-  for (const k in OIDC_METHODS) {
-    const key = k as OidcMethodKeys;
+  const { autoAuthenticate } = useAuth();
 
-    oidcMethodMap.value.set(key, {
-      uri: oidcSettings.value[OIDC_METHODS[key].uriKey] || "",
-
-      signin: async (
-        cb?: Function,
-        args?: SigninRedirectArgs | SigninPopupArgs
-      ) => {
-        const pass = await signIn(OIDC_METHODS[key].signInKey, args);
-
-        if (pass) {
-          cb?.();
-        }
-      },
-
-      signOut: async (args: SigninRedirectArgs | SigninPopupArgs) => {
-        await signOut(OIDC_METHODS[key].signOutKey, args);
-      },
-    });
-  }
-  //初始化本地状态
-  setupLocationState();
-  //安装反应式存储
-  setupReflectStorage();
+  if (auth && autoAuthenticate) autoAuthenticate();
 }
 
-export function useOidc<T>(): UseOidcReturnType<T> {
-  return {
-    tokenExpiresAt,
-    isTokenExpiresAt,
-    oidcUserProfile,
-    oidcToken,
-    hasAuthAccess,
-    hasCallbackUri,
-    oidcUser,
-    userMgr,
-    oidcEffect,
-    signinRedirect,
-    signInPopup,
-    signInRedirectCallback,
-    signInPopupCallback,
-    signOut: signOutRedirect,
-    removeOidcUser,
-    setOidcUser,
-  };
-}
-
-export {
-  useTokenExpiresAt,
-  useIsTokenExpiresAt,
-  useUserInfo,
-  useOidcToken,
-  useAuthenticated,
-  useIsCallback,
-  useUser,
-};
+export * from "./store";
+export * from "./types";
+export * from "./useAuth";

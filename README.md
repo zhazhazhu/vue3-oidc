@@ -2,10 +2,8 @@
 Vue3-oidc
 </h1>
 <p>
-Library of openid connect (oidc) and oauth2 integrated by oidc client, vue3 and Vue router
+Library of openid connect (oidc) and oauth2 integrated by oidc client, vue3
 <p>
-
-> Vitest requires Vue >=v3.2.37 and vue-router >=v4.0.16
 
 ## 📦 Install
 
@@ -13,115 +11,61 @@ Library of openid connect (oidc) and oauth2 integrated by oidc client, vue3 and 
 pnpm i vue3-oidc
 ```
 
+## Running the Server Sample
+
+```bash
+$ cd example/server
+$ npm install
+$ npm run build
+```
+
+## Running the Server client
+
+```bash
+$ cd example/client
+$ npm install
+$ npm run dev
+```
+
+## Getting Started
+
+Configure the library by wrapping your application in `createOidc` and your initialization application when run createOidc:
+
 ```ts
 //main.ts
+import { createApp } from "vue";
+import App from "./App.vue";
+import "./oidc";
+import router from "./router";
 
-import { setupOidc, useOidc } from "vue3-oidc";
+const app = createApp(App);
 
-const { oidcEffect } = useOidc();
+app.use(router);
 
-const oidcSettings = {
-  authority: "",
-  scope: "email profile roles openid",
-  client_id: "",
-  client_secret: "",
-  redirect_uri: "",
-  popup_redirect_uri: "",
+app.mount("#app");
+```
+
+```ts
+//oidc.ts
+import type { VueOidcSettings } from "vue3-oidc";
+import { createOidc } from "vue3-oidc";
+
+const oidcSettings: VueOidcSettings = {
+  authority: "http://localhost:4000",
+  scope: "openid",
+  client_id: "your client id",
+  client_secret: "your client secret",
+  redirect_uri: origin + "/oidc-callback",
   response_type: "code",
+  loadUserInfo: true,
+  onSigninRedirectCallback(user) {
+    console.log(user);
+    location.href = "/";
+  },
 };
 
-//初始化oidc
-setupOidc(oidcSettings);
-
-//创建路由中间件
-oidcEffect(router);
-```
-
-```ts
-//router
-import { createRouter, createWebHistory } from "vue-router";
-
-const routes: RouteRecordRaw[] = [
-  {
-    path: "/",
-    name: "app",
-    component: () => import("../App.vue"),
-    redirect: "/publicRoute",
-    children: [
-      {
-        path: "/oidc-callback",
-        name: "oidcCallback",
-        component: OidcCallback,
-      },
-      {
-        path: "/oidc-popup-callback",
-        name: "oidcPopupCallback",
-        component: OidcPopupCallback,
-      },
-      {
-        path: "/oidc-callback-error",
-        name: "oidcCallbackError",
-        component: OidcCallbackError,
-      },
-      {
-        path: "/helloWord",
-        name: "helloWord",
-        component: HelloWord,
-      },
-      {
-        path: "/publicRoute",
-        name: "publicRoute",
-        component: Public,
-        meta: {
-          isPublic: true, //公共路由
-        },
-      },
-    ],
-  },
-];
-
-const router = createRouter({
-  routes: routes,
-  history: createWebHistory(),
+createOidc({
+  oidcSettings: oidcSettings, //your oidc settings
+  auth: false, //if auth is true,will auto authenticate
 });
-
-export default router;
-```
-
-### API
-
-```ts
-import { useOidc } from "vue3-oidc";
-
-//useOidc()
-export interface UseOidcReturnType {
-  //token-expiresAt
-  tokenExpiresAt: Ref<number>;
-  //access token has expiresAt
-  isTokenExpiresAt: Ref<boolean>;
-  //access-token
-  oidcToken: Ref<string | null>;
-  //user-info
-  oidcUserProfile: Ref<UserProfile | undefined>;
-  hasAuthAccess: Ref<boolean>;
-  hasCallbackUri: Ref<boolean>;
-  oidcUser: Ref<User | null | undefined>;
-  //router Middleware
-  oidcEffect: OidcEffect;
-  signinRedirect: (args?: SigninRedirectArgs) => Promise<void>;
-  signInPopup: (args?: SigninPopupArgs) => Promise<void>;
-  signInRedirectCallback: (url?: string) => Promise<Ref<string>>;
-  signInPopupCallback: (url?: string) => Promise<Ref<string>>;
-  signOut: (args?: SignoutRedirectArgs) => Promise<void>;
-  removeOidcUser: () => Promise<void>;
-  setOidcUser: (user: User) => void;
-}
-
-useTokenExpiresAt: Ref<number>
-useIsTokenExpiresAt: Ref<boolean>
-useUserInfo: Ref<UserProfile | null>
-useOidcToken: Ref<string | null>
-useAuthenticated: Ref<boolean>
-useIsCallback: Ref<boolean>
-useUser: Ref<User | null>
 ```
