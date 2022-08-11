@@ -3,7 +3,9 @@
   "include": [
     "src/**/*",
     "src/**/*.vue",
+    "server/**/*"
   ],
+  "noImplicitAny": false,
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
@@ -13,7 +15,7 @@
     },
     "types": [
       "vite/client"
-    ]
+    ],
   },
   "references": [
     {
