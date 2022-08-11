@@ -19,7 +19,7 @@ $ npm install
 $ npm run build
 ```
 
-## Running the Server client
+## Running the Client Sample
 
 ```bash
 $ cd example/client
