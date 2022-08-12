@@ -88,7 +88,7 @@ app.get(metaData.end_session_endpoint, function (req, res) {
     }
     res.redirect(url);
   } else {
-    res.send("logged out");
+    res.send("will redirect url,logged out...");
   }
 });
 
