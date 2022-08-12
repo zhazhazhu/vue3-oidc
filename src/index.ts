@@ -1,4 +1,4 @@
-import { UserManager } from "oidc-client-ts";
+import { UserManager, UserManagerEvents } from "oidc-client-ts";
 import { unref } from "vue";
 import { useOidcStore } from "./store";
 import { inlineOidcEvents } from "./store/events";
@@ -13,16 +13,23 @@ export interface CreateOidcOptions {
    * whether open autoAuthenticate
    */
   auth?: boolean;
+  /**
+   *
+   */
+  events?: {
+    [P in keyof UserManagerEvents]?: Parameters<UserManagerEvents[P]>[0];
+  };
 }
 
 export function createOidc(options: CreateOidcOptions) {
   const { oidcSettings, auth } = options;
+  const events = { ...options.events, ...inlineOidcEvents };
 
   unref(state).oidcSettings = oidcSettings;
   unref(state).userManager = new UserManager(oidcSettings);
   //add event listeners to the oidc client
-  Object.keys(inlineOidcEvents).forEach((key) => {
-    unref(state).userManager!.events[key](inlineOidcEvents[key]);
+  Object.keys(events).forEach((key) => {
+    unref(state).userManager!.events[key](events[key]);
   });
 
   const { autoAuthenticate } = useAuth();
