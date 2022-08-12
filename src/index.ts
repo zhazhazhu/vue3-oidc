@@ -25,7 +25,7 @@ export interface CreateOidcOptions {
 
 export function createOidc(options: CreateOidcOptions) {
   const { oidcSettings, auth } = options;
-  const events = { ...options.events, ...inlineOidcEvents };
+  const events = { ...inlineOidcEvents, ...options.events };
 
   unref(state).oidcSettings = oidcSettings;
   unref(state).userManager = new UserManager(oidcSettings);

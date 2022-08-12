@@ -18,4 +18,10 @@ const oidcSettings: VueOidcSettings = {
 createOidc({
   oidcSettings: oidcSettings, //your oidc settings
   auth: false, //if auth is true,will auto authenticate
+  //your oidc events
+  events: {
+    addUserLoaded: (user) => {
+      console.log(user);
+    },
+  },
 });
