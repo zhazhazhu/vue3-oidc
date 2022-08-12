@@ -27,6 +27,8 @@ $ npm install
 $ npm run dev
 ```
 
+![vue3-oidc](https://cdn.jsdelivr.net/gh/zhazhazhu/image-hosting@master/root/image_ey5y0c_.jpeg)
+
 ## Getting Started
 
 Configure the library by wrapping your application in `createOidc` and your initialization application when run createOidc:
@@ -67,5 +69,6 @@ const oidcSettings: VueOidcSettings = {
 createOidc({
   oidcSettings: oidcSettings, //your oidc settings
   auth: false, //if auth is true,will auto authenticate
+  events: {}, //your oidc customization callback events
 });
 ```
