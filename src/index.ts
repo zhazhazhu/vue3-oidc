@@ -7,6 +7,10 @@ import { useAuth } from "./useAuth";
 
 const { state } = useOidcStore();
 
+export type VueOidcEvents = {
+  [P in keyof UserManagerEvents]?: Parameters<UserManagerEvents[P]>[0];
+};
+
 export interface CreateOidcOptions {
   oidcSettings: VueOidcSettings;
   /**
@@ -14,11 +18,9 @@ export interface CreateOidcOptions {
    */
   auth?: boolean;
   /**
-   *
+   * oidc events
    */
-  events?: {
-    [P in keyof UserManagerEvents]?: Parameters<UserManagerEvents[P]>[0];
-  };
+  events?: VueOidcEvents;
 }
 
 export function createOidc(options: CreateOidcOptions) {
