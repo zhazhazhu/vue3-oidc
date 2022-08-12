@@ -1,8 +1,8 @@
 import { MaybeNull } from "@/types";
-import { OidcClientSettings, User, UserManager } from "oidc-client-ts";
+import { User, UserManager, UserManagerSettings } from "oidc-client-ts";
 import { computed, ComputedRef, reactive, UnwrapNestedRefs } from "vue";
 
-export interface VueOidcSettings extends OidcClientSettings {
+export interface VueOidcSettings extends UserManagerSettings {
   /**
    *  redirect callback is login success after
    */
@@ -35,6 +35,7 @@ const state: UnwrapNestedRefs<OidcState> = reactive<OidcState>({
 const actions: OidcActions = {
   setUser(user: User) {
     state.user = user;
+    state.userManager?.storeUser(user);
   },
   async removeUser() {
     state.user = null;

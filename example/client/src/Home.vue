@@ -17,6 +17,10 @@ const signout = () => {
   signoutRedirect();
 };
 
+const popup = () => {
+  state.value.userManager?.signinPopup();
+};
+
 /**
  * you can also use autoAuthenticate() to automatically authenticate the user,
  * or call open auth of createOidc options
@@ -45,6 +49,7 @@ onMounted(() => {
     <div>
       <button @click="signin">Signin</button>
       <button @click="signout">Signout</button>
+      <button @click="popup">Popup_SignIn</button>
     </div>
 
     <div class="divider"></div>

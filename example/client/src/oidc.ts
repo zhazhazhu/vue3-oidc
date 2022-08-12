@@ -1,3 +1,4 @@
+import { WebStorageStateStore } from "oidc-client-ts";
 import type { VueOidcSettings } from "vue3-oidc";
 import { createOidc } from "vue3-oidc";
 import router from "./router";
@@ -11,6 +12,10 @@ const oidcSettings: VueOidcSettings = {
   post_logout_redirect_uri: origin + "/signout",
   response_type: "code",
   loadUserInfo: true,
+  userStore: new WebStorageStateStore({
+    prefix: "vue3-oidc",
+    store: window.localStorage,
+  }),
   onSigninRedirectCallback(user) {
     router.push("/home");
   },

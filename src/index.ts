@@ -5,7 +5,7 @@ import { inlineOidcEvents } from "./store/events";
 import { VueOidcSettings } from "./store/index";
 import { useAuth } from "./useAuth";
 
-const { state } = useOidcStore();
+const { state, actions } = useOidcStore();
 
 export type VueOidcEvents = {
   [P in keyof UserManagerEvents]?: Parameters<UserManagerEvents[P]>[0];
@@ -33,6 +33,12 @@ export function createOidc(options: CreateOidcOptions) {
   Object.keys(events).forEach((key) => {
     unref(state).userManager!.events[key](events[key]);
   });
+
+  unref(state)
+    .userManager!.getUser()
+    .then((user) => {
+      actions.value.setUser(user!);
+    });
 
   const { autoAuthenticate } = useAuth();
 
