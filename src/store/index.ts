@@ -14,13 +14,13 @@ export interface VueOidcSettings extends UserManagerSettings {
   onSigninRedirectCallback?: (user: User) => void;
 }
 
-export type UseUserProfile<T extends Object = {}> = UserProfile & T;
+export type UseUserProfile<T = UserProfile> = T;
 
-export interface OidcUser<T extends Object = {}> extends User {
+export type OidcUser<T = UserProfile> = User & {
   profile: UseUserProfile<T>;
-}
+};
 
-export interface OidcState<T extends Object = {}> {
+export interface OidcState<T = UserProfile> {
   oidcSettings: MaybeNull<VueOidcSettings>;
   userManager: MaybeNull<UserManager>;
   user: MaybeNull<OidcUser<T>>;
@@ -54,7 +54,7 @@ const actions: OidcActions = {
   },
 };
 
-export function useOidcStore<T extends Object = {}>(): {
+export function useOidcStore<T = UserProfile>(): {
   state: ComputedRef<UnwrapNestedRefs<OidcState<T>>>;
   actions: ComputedRef<OidcActions>;
 } {
@@ -62,12 +62,4 @@ export function useOidcStore<T extends Object = {}>(): {
     state: computed(() => state as UnwrapNestedRefs<OidcState<T>>),
     actions: computed(() => actions),
   };
-}
-
-export function useUser<T>() {
-  return computed(() => state.user as OidcUser<T>);
-}
-
-export function useUserProfile<T>() {
-  return computed(() => state.user?.profile as UseUserProfile<T>);
 }
