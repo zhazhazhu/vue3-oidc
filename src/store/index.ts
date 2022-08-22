@@ -1,5 +1,10 @@
 import { MaybeNull } from "@/types";
-import { User, UserManager, UserManagerSettings } from "oidc-client-ts";
+import {
+  User,
+  UserManager,
+  UserManagerSettings,
+  UserProfile,
+} from "oidc-client-ts";
 import { computed, ComputedRef, reactive, UnwrapNestedRefs } from "vue";
 
 export interface VueOidcSettings extends UserManagerSettings {
@@ -9,10 +14,16 @@ export interface VueOidcSettings extends UserManagerSettings {
   onSigninRedirectCallback?: (user: User) => void;
 }
 
-export interface OidcState {
+export type UseUserProfile<T extends Object = {}> = UserProfile & T;
+
+export interface OidcUser<T extends Object = {}> extends User {
+  profile: UseUserProfile<T>;
+}
+
+export interface OidcState<T extends Object = {}> {
   oidcSettings: MaybeNull<VueOidcSettings>;
   userManager: MaybeNull<UserManager>;
-  user: MaybeNull<User>;
+  user: MaybeNull<OidcUser<T>>;
   token: ComputedRef<string | null>;
   hasExpiresAt: ComputedRef<boolean>;
 }
@@ -43,9 +54,20 @@ const actions: OidcActions = {
   },
 };
 
-export function useOidcStore(): {
-  state: ComputedRef<UnwrapNestedRefs<OidcState>>;
+export function useOidcStore<T extends Object = {}>(): {
+  state: ComputedRef<UnwrapNestedRefs<OidcState<T>>>;
   actions: ComputedRef<OidcActions>;
 } {
-  return { state: computed(() => state), actions: computed(() => actions) };
+  return {
+    state: computed(() => state as UnwrapNestedRefs<OidcState<T>>),
+    actions: computed(() => actions),
+  };
+}
+
+export function useUser<T>() {
+  return computed(() => state.user as OidcUser<T>);
+}
+
+export function useUserProfile<T>() {
+  return computed(() => state.user?.profile as UseUserProfile<T>);
 }
