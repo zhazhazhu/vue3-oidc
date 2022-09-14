@@ -72,3 +72,52 @@ createOidc({
   events: {}, //your oidc customization callback events
 });
 ```
+
+### API
+
+- useOidcStore
+
+```ts
+//type
+import type { UserProfile } from "oidc-client-ts";
+function useOidcStore<T>(): {
+  state: ComputedRef<OidcState<T>>;
+  actions: ComputedRef<OidcActions>;
+};
+
+interface OidcState<T = UserProfile> {
+  oidcSettings: MaybeNull<VueOidcSettings>;
+  userManager: MaybeNull<UserManager>;
+  user: MaybeNull<OidcUser<T>>;
+  token: ComputedRef<string | null>;
+  hasExpiresAt: ComputedRef<boolean>;
+}
+
+interface OidcActions {
+  setUser(user: User): void;
+  removeUser(): void;
+}
+
+type OidcUser<T = UserProfile> = User & {
+  profile: UseUserProfile<T>;
+};
+
+type UseUserProfile<T = UserProfile> = T;
+```
+
+- useAuth
+
+```ts
+//type
+function useAuth(): {
+  autoAuthenticate: typeof autoAuthenticate;
+  signinRedirect: typeof signinRedirect;
+  signoutRedirect: typeof signoutRedirect;
+};
+//autoAuthenticate - will try to authenticate the user silently
+function autoAuthenticate(): Promise<void>;
+//signin callback
+function signinRedirect(arg?: SigninRedirectArgs): void;
+//signout callback
+function signoutRedirect(arg?: SignoutRedirectArgs): void;
+```
