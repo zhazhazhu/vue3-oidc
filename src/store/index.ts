@@ -26,6 +26,7 @@ export interface OidcState<T = UserProfile> {
   user: MaybeNull<OidcUser<T>>;
   token: ComputedRef<string | null>;
   hasExpiresAt: ComputedRef<boolean>;
+  redirect_uri: string;
 }
 
 export interface OidcActions {
@@ -41,6 +42,7 @@ const state: UnwrapNestedRefs<OidcState> = reactive<OidcState>({
   hasExpiresAt: computed(
     () => Date.now() / 1000 > state.user?.expires_at! || false
   ),
+  redirect_uri: "",
 });
 
 const actions: OidcActions = {
