@@ -1,0 +1,1 @@
+export const OIDC_REDIRECT_URI = "OIDC_REDIRECT_URI";
