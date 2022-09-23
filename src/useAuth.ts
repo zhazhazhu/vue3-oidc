@@ -26,12 +26,12 @@ function signoutRedirect(arg?: SignoutRedirectArgs) {
 /**
  * @fn autoAuthenticate - will try to authenticate the user silently
  */
-async function autoAuthenticate(uri: string = "/") {
+async function autoAuthenticate(uri: string = "") {
   const user = (await unref(state).userManager?.getUser()) || unref(state).user;
 
   //if the user and pathCallback is not, then we can authenticate
   if (!user && !isPathOfCallback()) {
-    state.value.redirect_uri = uri;
+    state.value.redirect_uri = uri || location.pathname || "/";
     await unref(state).userManager?.removeUser();
     await unref(state).userManager?.signinRedirect();
     return;
