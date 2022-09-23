@@ -1,3 +1,4 @@
+import { OIDC_REDIRECT_URI } from "@/keys";
 import { MaybeNull } from "@/types";
 import {
   User,
@@ -42,7 +43,7 @@ const state: UnwrapNestedRefs<OidcState> = reactive<OidcState>({
   hasExpiresAt: computed(
     () => Date.now() / 1000 > state.user?.expires_at! || false
   ),
-  redirect_uri: "",
+  redirect_uri: localStorage.getItem(OIDC_REDIRECT_URI) || "",
 });
 
 const actions: OidcActions = {
