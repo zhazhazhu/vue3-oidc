@@ -50,7 +50,10 @@ app.mount("#app");
 ```ts
 //oidc.ts
 import type { VueOidcSettings } from "vue3-oidc";
-import { createOidc } from "vue3-oidc";
+import { createOidc, useOidcStore } from "vue3-oidc";
+import { unref } from "vue";
+
+const { state } = useOidcStore();
 
 const oidcSettings: VueOidcSettings = {
   authority: "http://localhost:4000",
@@ -62,13 +65,13 @@ const oidcSettings: VueOidcSettings = {
   loadUserInfo: true,
   onSigninRedirectCallback(user) {
     console.log(user);
-    location.href = "/";
+    location.href = unref(state).redirect_uri || "/";
   },
 };
 
 createOidc({
   oidcSettings: oidcSettings, //your oidc settings
-  auth: false, //if auth is true,will auto authenticate
+  auth: true, //if auth is true,will auto authenticate
   events: {}, //your oidc customization callback events
 });
 ```
@@ -91,6 +94,7 @@ interface OidcState<T = UserProfile> {
   user: MaybeNull<OidcUser<T>>;
   token: ComputedRef<string | null>;
   hasExpiresAt: ComputedRef<boolean>;
+  redirect_uri: string;
 }
 
 interface OidcActions {
