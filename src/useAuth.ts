@@ -43,9 +43,8 @@ async function autoAuthenticate(uri: string = "") {
   //if the user is not and pathCallback is, then we can set the user
   if (!user && isPathOfCallback()) {
     const user = await unref(state).userManager?.signinRedirectCallback();
-    if (unref(state).oidcSettings?.onSigninRedirectCallback) {
-      unref(state).oidcSettings!.onSigninRedirectCallback!(user!);
-    }
+    unref(state).oidcSettings?.onSigninRedirectCallback &&
+      unref(state).oidcSettings?.onSigninRedirectCallback?.(user!);
     unref(actions).setUser(user!);
     return;
   }
@@ -57,6 +56,15 @@ async function autoAuthenticate(uri: string = "") {
       await signoutRedirect();
       return;
     }
+    return;
+  }
+  //if the user is and pathCallback is then we can recur set the user and run function name is onSigninRedirectCallback
+  if (user && isPathOfCallback()) {
+    setInterval(() => {
+      unref(state).oidcSettings?.onSigninRedirectCallback &&
+        unref(state).oidcSettings?.onSigninRedirectCallback?.(user);
+      unref(actions).setUser(user);
+    }, 3000);
     return;
   }
 }
