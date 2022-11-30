@@ -1,7 +1,9 @@
 import { WebStorageStateStore } from "oidc-client-ts";
+import { unref } from "vue";
 import type { VueOidcSettings } from "vue3-oidc";
-import { createOidc } from "vue3-oidc";
-import router from "./router";
+import { createOidc, useOidcStore } from "vue3-oidc";
+
+const { state } = useOidcStore();
 
 const oidcSettings: VueOidcSettings = {
   authority: "http://localhost:4000",
@@ -17,11 +19,11 @@ const oidcSettings: VueOidcSettings = {
     store: window.localStorage,
   }),
   onSigninRedirectCallback(user) {
-    router.push("/home");
+    location.href = unref(state).redirect_uri || "/home";
   },
 };
 
-export function oidc() {
+function runAuth() {
   createOidc({
     oidcSettings: oidcSettings, //your oidc settings
     auth: false, //if auth is true,will auto authenticate
@@ -34,3 +36,5 @@ export function oidc() {
     },
   });
 }
+
+runAuth();
