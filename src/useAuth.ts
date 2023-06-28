@@ -1,7 +1,6 @@
 import { SigninRedirectArgs, SignoutRedirectArgs } from "oidc-client-ts";
 import { unref } from "vue";
-import { OIDC_REDIRECT_URI } from "./keys";
-import { useOidcStore } from "./store";
+import { storage, useOidcStore } from "./store";
 import { isPathOfCallback } from "./utils";
 
 const { state, actions } = useOidcStore();
@@ -32,10 +31,7 @@ async function autoAuthenticate(uri: string = "") {
 
   //if the user and pathCallback is not, then we can authenticate
   if (!user && !isPathOfCallback()) {
-    localStorage.setItem(
-      OIDC_REDIRECT_URI,
-      uri || location.pathname + location.search || "/"
-    );
+    storage.value = uri || location.pathname + location.search || "/";
     await unref(state).userManager?.removeUser();
     await unref(state).userManager?.signinRedirect();
     return;
