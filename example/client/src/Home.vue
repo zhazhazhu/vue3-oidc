@@ -37,7 +37,7 @@ onMounted(() => {
     <!-- user avatar -->
     <div class="avatar">
       <template v-if="state.user">
-        <img :src="(state.user.profile.avatar as string)" alt="avatar" />
+        <img :src="(state.user.profile.Avatar as string)" alt="avatar" />
       </template>
       <template v-else>
         <div>暂未登录</div>
@@ -57,6 +57,7 @@ onMounted(() => {
     <div class="user">
       <div><span>token:</span>{{ state?.token }}</div>
       <div><span>token_type:</span>{{ state?.user?.token_type }}</div>
+      <div><span>expires_in:</span>{{ state?.user?.expires_in }}</div>
       <div>
         <span> profile: </span>
         <div v-for="(item, key) in state.user?.profile">

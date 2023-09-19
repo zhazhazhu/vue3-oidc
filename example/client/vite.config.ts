@@ -13,4 +13,12 @@ export default defineConfig({
   server: {
     host: true,
   },
+  build: {
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, "index.html"),
+        "silent-renew": resolve(__dirname, "silent-renew.html"),
+      },
+    },
+  },
 });
