@@ -8,6 +8,7 @@ import {
   UserProfile,
 } from "oidc-client-ts";
 import { ComputedRef, UnwrapNestedRefs, computed, reactive } from "vue";
+import { CreateOidcOptions } from "..";
 
 export interface VueOidcSettings extends UserManagerSettings {
   /**
@@ -23,8 +24,10 @@ export type OidcUser<T = UserProfile> = User & {
 };
 
 export interface OidcState<T = UserProfile> {
+  settings: MaybeNull<CreateOidcOptions>;
   oidcSettings: MaybeNull<VueOidcSettings>;
   userManager: MaybeNull<UserManager>;
+  refreshUserManager: MaybeNull<UserManager>;
   user: MaybeNull<OidcUser<T>>;
   token: ComputedRef<string | null>;
   hasExpiresAt: ComputedRef<boolean>;
@@ -42,8 +45,10 @@ export const storage: RemovableRef<string> = useStorage<string>(
 );
 
 const state: UnwrapNestedRefs<OidcState> = reactive<OidcState>({
+  settings: null,
   oidcSettings: null,
   userManager: null,
+  refreshUserManager: null,
   user: null,
   token: computed(() => state.user?.access_token || null),
   hasExpiresAt: computed(

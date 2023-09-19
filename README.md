@@ -91,6 +91,7 @@ function useOidcStore<T>(): {
 interface OidcState<T = UserProfile> {
   oidcSettings: MaybeNull<VueOidcSettings>;
   userManager: MaybeNull<UserManager>;
+  refreshUserManager: MaybeNull<UserManager>;
   user: MaybeNull<OidcUser<T>>;
   token: ComputedRef<string | null>;
   hasExpiresAt: ComputedRef<boolean>;
@@ -117,6 +118,7 @@ function useAuth(): {
   autoAuthenticate: typeof autoAuthenticate;
   signinRedirect: typeof signinRedirect;
   signoutRedirect: typeof signoutRedirect;
+  refreshToken: typeof refreshToken;
 };
 //autoAuthenticate - will try to authenticate the user silently
 function autoAuthenticate(): Promise<void>;
@@ -124,4 +126,10 @@ function autoAuthenticate(): Promise<void>;
 function signinRedirect(arg?: SigninRedirectArgs): void;
 //signout callback
 function signoutRedirect(arg?: SignoutRedirectArgs): void;
+//refresh token
+function refreshToken(
+  arg?: SigninSilentArgs,
+  success?: (user: User | null) => void | Promise<void>,
+  fail?: (err: any) => void | Promise<void>
+): void;
 ```
