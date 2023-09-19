@@ -18,6 +18,9 @@ const oidcSettings: VueOidcSettings = {
     prefix: "vue3-oidc",
     store: window.localStorage,
   }),
+  automaticSilentRenew: true,
+  monitorSession: true,
+  silent_redirect_uri: location.origin + "/silent-renew.html",
   onSigninRedirectCallback(user) {
     location.href = unref(state).redirect_uri || "/home";
   },
@@ -27,6 +30,10 @@ function runAuth() {
   createOidc({
     oidcSettings: oidcSettings, //your oidc settings
     auth: false, //if auth is true,will auto authenticate
+    refreshToken: {
+      enable: true,
+      time: 10 * 1000,
+    },
     //your oidc events
     events: {
       addUserLoaded: (user) => {
