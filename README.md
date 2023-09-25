@@ -73,6 +73,10 @@ createOidc({
   oidcSettings: oidcSettings, //your oidc settings
   auth: true, //if auth is true,will auto authenticate
   events: {}, //your oidc customization callback events
+  refreshToken: {
+    enable: true,
+    time: 30000,
+  },
 });
 ```
 
