@@ -63,6 +63,7 @@ export function createOidc(options: CreateOidcOptions) {
   if (auth && autoAuthenticate) autoAuthenticate();
 }
 
+export * from "oidc-client-ts";
 export * from "./store";
 export * from "./types";
 export * from "./useAuth";
