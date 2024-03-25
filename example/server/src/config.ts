@@ -4,7 +4,7 @@ export const userInfo = {
   email_verified: true,
   role: ["Admin", "Geek"],
   avatar:
-    "https://cdn.jsdelivr.net/gh/zhazhazhu/image-hosting@master/blog-photo/WechatIMG235_f6tvl0_.jpeg",
+    "https://avatars.githubusercontent.com/u/80683658?s=400&u=9feb1c1ee3ae25b1b039ee1f0dca4581f44f041c&v=4",
 };
 
 function encodeBase64Url(str: string) {

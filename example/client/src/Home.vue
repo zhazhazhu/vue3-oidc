@@ -37,7 +37,7 @@ onMounted(() => {
     <!-- user avatar -->
     <div class="avatar">
       <template v-if="state.user">
-        <img :src="(state.user.profile.Avatar as string)" alt="avatar" />
+        <img :src="(state.user.profile.avatar as string)" alt="avatar" />
       </template>
       <template v-else>
         <div>暂未登录</div>

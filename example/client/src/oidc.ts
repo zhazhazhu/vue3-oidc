@@ -6,10 +6,10 @@ import { createOidc, useOidcStore } from "vue3-oidc";
 const { state } = useOidcStore();
 
 const oidcSettings: VueOidcSettings = {
-  authority: "https://dev.iduo.cc:4500",
-  scope: "email profile roles openid iduo.api offline_access",
-  client_id: "INTERNAL00000000CODE",
-  client_secret: "INTERNAL-b5d5-7eba-1d182998574a",
+  authority: "http://localhost:4000",
+  scope: "openid",
+  client_id: "your client id",
+  client_secret: "your client secret",
   redirect_uri: origin + "/oidc-callback",
   post_logout_redirect_uri: origin + "/signout",
   response_type: "code",
