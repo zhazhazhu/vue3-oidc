@@ -1,1 +1,3 @@
-export const OIDC_REDIRECT_URI = "OIDC_REDIRECT_URI";
+import { ref } from "vue";
+
+export const oidcRedirectUriKey = ref("OIDC_REDIRECT_URI");

@@ -1,5 +1,6 @@
 import { UserManager, UserManagerEvents } from "oidc-client-ts";
 import { unref } from "vue";
+import { oidcRedirectUriKey } from "./keys";
 import { useOidcStore } from "./store";
 import { inlineOidcEvents } from "./store/events";
 import { VueOidcSettings } from "./store/index";
@@ -34,12 +35,17 @@ export interface CreateOidcOptions {
    * refresh token
    */
   refreshToken?: RefreshTokenConfig;
+  /**
+   * key of oidc redirect callback
+   */
+  redirectUriKey?: string;
 }
 
 export function createOidc(options: CreateOidcOptions) {
   const _options = { ...inlineCreateOidcOptions, ...options };
   const { oidcSettings, auth, refreshToken } = _options;
   const events = { ...inlineOidcEvents, ...options.events };
+  oidcRedirectUriKey.value = options.redirectUriKey || oidcRedirectUriKey.value;
 
   unref(state).settings = _options;
   unref(state).oidcSettings = oidcSettings;

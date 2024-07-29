@@ -1,4 +1,4 @@
-import { toValue } from "@vueuse/core";
+import { toValue, useStorage } from "@vueuse/core";
 import {
   SigninRedirectArgs,
   SigninSilentArgs,
@@ -6,7 +6,8 @@ import {
   User,
 } from "oidc-client-ts";
 import { unref } from "vue";
-import { storage, useOidcStore } from "./store";
+import { oidcRedirectUriKey } from "./keys";
+import { useOidcStore } from "./store";
 import { isPathOfCallback } from "./utils";
 
 const { state, actions } = useOidcStore();
@@ -36,6 +37,7 @@ function signoutRedirect(arg?: SignoutRedirectArgs) {
 async function autoAuthenticate(uri: string = "") {
   let timer: NodeJS.Timer | null = null;
   const user = (await unref(state).userManager?.getUser()) || unref(state).user;
+  const storage = useStorage<string>(oidcRedirectUriKey.value, "");
 
   //if the user and pathCallback is not, then we can authenticate
   if (!user && !isPathOfCallback()) {

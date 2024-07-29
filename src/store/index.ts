@@ -1,6 +1,6 @@
-import { OIDC_REDIRECT_URI } from "@/keys";
+import { oidcRedirectUriKey } from "@/keys";
 import { MaybeNull } from "@/types";
-import { useStorage, type RemovableRef } from "@vueuse/core";
+import { useStorage } from "@vueuse/core";
 import {
   User,
   UserManager,
@@ -39,11 +39,6 @@ export interface OidcActions {
   removeUser(): void;
 }
 
-export const storage: RemovableRef<string> = useStorage<string>(
-  OIDC_REDIRECT_URI,
-  ""
-);
-
 const state: UnwrapNestedRefs<OidcState> = reactive<OidcState>({
   settings: null,
   oidcSettings: null,
@@ -54,7 +49,7 @@ const state: UnwrapNestedRefs<OidcState> = reactive<OidcState>({
   hasExpiresAt: computed(
     () => Date.now() / 1000 > state.user?.expires_at! || false
   ),
-  redirect_uri: storage.value,
+  redirect_uri: useStorage<string>(oidcRedirectUriKey.value, "").value,
 });
 
 const actions: OidcActions = {

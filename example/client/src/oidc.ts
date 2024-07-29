@@ -41,6 +41,8 @@ function runAuth() {
       },
       addUserSignedOut: () => {},
     },
+    //your key customization of oidc redirect callback
+    redirectUriKey: "CUSTOM_REDIRECT_URI",
   });
 }
 
