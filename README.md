@@ -50,10 +50,11 @@ app.mount("#app");
 ```ts
 //oidc.ts
 import type { VueOidcSettings } from "vue3-oidc";
-import { createOidc, useOidcStore } from "vue3-oidc";
+import { createOidc, useOidcStore, useAuth } from "vue3-oidc";
 import { unref } from "vue";
 
 const { state } = useOidcStore();
+const { setRedirectUri } = useAuth();
 
 const oidcSettings: VueOidcSettings = {
   authority: "http://localhost:4000",
@@ -67,6 +68,9 @@ const oidcSettings: VueOidcSettings = {
     console.log(user);
     location.href = unref(state).redirect_uri || "/";
   },
+  onBeforeSigninRedirectCallback() {
+    setRedirectUri(location.pathname + location.search);
+  },
 };
 
 createOidc({
@@ -77,6 +81,8 @@ createOidc({
     enable: true,
     time: 30000,
   },
+  //your key customization of oidc redirect callback
+  redirectUriKey: "CUSTOM_REDIRECT_URI",
 });
 ```
 
@@ -123,6 +129,7 @@ function useAuth(): {
   signinRedirect: typeof signinRedirect;
   signoutRedirect: typeof signoutRedirect;
   refreshToken: typeof refreshToken;
+  setRedirectUri: typeof setRedirectUri;
 };
 //autoAuthenticate - will try to authenticate the user silently
 function autoAuthenticate(): Promise<void>;
@@ -136,4 +143,6 @@ function refreshToken(
   success?: (user: User | null) => void | Promise<void>,
   fail?: (err: any) => void | Promise<void>
 ): void;
+//setRedirectUri
+function setRedirectUri(uri: string): void;
 ```
