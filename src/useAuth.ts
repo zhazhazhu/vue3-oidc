@@ -18,10 +18,13 @@ export function useAuth() {
     signinRedirect,
     signoutRedirect,
     refreshToken,
+    setRedirectUri,
   };
 }
 
 function signinRedirect(arg?: SigninRedirectArgs) {
+  state.value.oidcSettings?.onBeforeSigninRedirectCallback &&
+    state.value.oidcSettings?.onBeforeSigninRedirectCallback();
   if (!unref(state).user) {
     unref(state).userManager?.signinRedirect(arg);
   }
@@ -42,6 +45,8 @@ async function autoAuthenticate(uri: string = "") {
   //if the user and pathCallback is not, then we can authenticate
   if (!user && !isPathOfCallback()) {
     storage.value = uri || location.pathname + location.search || "/";
+    state.value.oidcSettings?.onBeforeSigninRedirectCallback &&
+      state.value.oidcSettings?.onBeforeSigninRedirectCallback();
     await unref(state).userManager?.removeUser();
     await unref(state).userManager?.signinRedirect();
     return;
@@ -103,4 +108,8 @@ function refreshToken(
     .catch((err) => {
       fn2 && fn2(err);
     });
+}
+
+function setRedirectUri(uri: string) {
+  useStorage(oidcRedirectUriKey.value, uri).value = uri;
 }

@@ -1,6 +1,4 @@
-import { oidcRedirectUriKey } from "@/keys";
 import { MaybeNull } from "@/types";
-import { useStorage } from "@vueuse/core";
 import {
   User,
   UserManager,
@@ -15,6 +13,10 @@ export interface VueOidcSettings extends UserManagerSettings {
    *  redirect callback is login success after
    */
   onSigninRedirectCallback?: (user: User) => void;
+  /**
+   * redirect callback is login before
+   */
+  onBeforeSigninRedirectCallback?: () => void;
 }
 
 export type UseUserProfile<T = UserProfile> = T;
@@ -49,7 +51,7 @@ const state: UnwrapNestedRefs<OidcState> = reactive<OidcState>({
   hasExpiresAt: computed(
     () => Date.now() / 1000 > state.user?.expires_at! || false
   ),
-  redirect_uri: useStorage<string>(oidcRedirectUriKey.value, "").value,
+  redirect_uri: "",
 });
 
 const actions: OidcActions = {

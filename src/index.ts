@@ -47,6 +47,8 @@ export function createOidc(options: CreateOidcOptions) {
   const events = { ...inlineOidcEvents, ...options.events };
   oidcRedirectUriKey.value = options.redirectUriKey || oidcRedirectUriKey.value;
 
+  unref(state).redirect_uri =
+    localStorage.getItem(oidcRedirectUriKey.value) || "";
   unref(state).settings = _options;
   unref(state).oidcSettings = oidcSettings;
   unref(state).userManager = new UserManager(oidcSettings);

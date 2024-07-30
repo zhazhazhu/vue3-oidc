@@ -1,9 +1,10 @@
 import { WebStorageStateStore } from "oidc-client-ts";
 import { unref } from "vue";
 import type { VueOidcSettings } from "vue3-oidc";
-import { createOidc, useOidcStore } from "vue3-oidc";
+import { createOidc, useAuth, useOidcStore } from "vue3-oidc";
 
 const { state } = useOidcStore();
+const { setRedirectUri } = useAuth();
 
 const oidcSettings: VueOidcSettings = {
   authority: "http://localhost:4000",
@@ -23,6 +24,9 @@ const oidcSettings: VueOidcSettings = {
   silent_redirect_uri: location.origin + "/silent-renew.html",
   onSigninRedirectCallback(user) {
     location.href = unref(state).redirect_uri || "/home";
+  },
+  onBeforeSigninRedirectCallback() {
+    setRedirectUri(location.pathname + location.search);
   },
 };
 
