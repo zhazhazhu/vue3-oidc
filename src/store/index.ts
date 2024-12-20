@@ -1,4 +1,4 @@
-import { MaybeNull } from "@/types";
+import { MaybeNull } from "@/index";
 import {
   User,
   UserManager,

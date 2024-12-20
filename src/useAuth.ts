@@ -5,12 +5,13 @@ import {
   SignoutRedirectArgs,
   User,
 } from "oidc-client-ts";
-import { unref } from "vue";
-import { oidcRedirectUriKey } from "./keys";
+import { ref, unref } from "vue";
 import { useOidcStore } from "./store";
 import { isPathOfCallback } from "./utils";
 
 const { state, actions } = useOidcStore();
+
+export const oidcRedirectUriKey = ref("OIDC_REDIRECT_URI");
 
 export function useAuth() {
   return {

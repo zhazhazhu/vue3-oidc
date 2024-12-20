@@ -1,17 +1,23 @@
 import { UserManager, UserManagerEvents } from "oidc-client-ts";
 import { unref } from "vue";
-import { oidcRedirectUriKey } from "./keys";
 import { useOidcStore } from "./store";
 import { inlineOidcEvents } from "./store/events";
 import { VueOidcSettings } from "./store/index";
-import { RefreshTokenConfig } from "./types";
-import { useAuth } from "./useAuth";
+import { oidcRedirectUriKey, useAuth } from "./useAuth";
 
 const { state, actions } = useOidcStore();
 
 export type VueOidcEvents = {
   [P in keyof UserManagerEvents]?: Parameters<UserManagerEvents[P]>[0];
 };
+
+export type MaybeNull<T> = T | null;
+
+export interface RefreshTokenConfig {
+  enable?: boolean;
+  time?: number;
+  settings?: VueOidcSettings | null;
+}
 
 const inlineCreateOidcOptions: Partial<CreateOidcOptions> = {
   refreshToken: {
@@ -73,5 +79,4 @@ export function createOidc(options: CreateOidcOptions) {
 
 export * from "oidc-client-ts";
 export * from "./store";
-export * from "./types";
 export * from "./useAuth";
