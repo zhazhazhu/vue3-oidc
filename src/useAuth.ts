@@ -31,8 +31,8 @@ function signinRedirect(arg?: SigninRedirectArgs) {
   }
 }
 
-function signoutRedirect(arg?: SignoutRedirectArgs) {
-  unref(state).userManager?.signoutRedirect(arg);
+async function signoutRedirect(arg?: SignoutRedirectArgs) {
+  await unref(state).userManager?.signoutRedirect(arg);
 }
 
 /**
