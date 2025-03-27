@@ -1,4 +1,3 @@
-import { toValue, useStorage } from "@vueuse/core";
 import {
   SigninRedirectArgs,
   SigninSilentArgs,
@@ -41,11 +40,13 @@ async function signoutRedirect(arg?: SignoutRedirectArgs) {
 async function autoAuthenticate(uri: string = "") {
   let timer: NodeJS.Timer | null = null;
   const user = (await unref(state).userManager?.getUser()) || unref(state).user;
-  const storage = useStorage<string>(oidcRedirectUriKey.value, "");
 
   //if the user and pathCallback is not, then we can authenticate
   if (!user && !isPathOfCallback()) {
-    storage.value = uri || location.pathname + location.search || "/";
+    unref(state).settings?.oidcSettings.userStore?.set(
+      oidcRedirectUriKey.value,
+      uri || location.pathname + location.search || "/"
+    );
     state.value.oidcSettings?.onBeforeSigninRedirectCallback &&
       state.value.oidcSettings?.onBeforeSigninRedirectCallback();
     await unref(state).userManager?.removeUser();
@@ -86,7 +87,7 @@ async function autoAuthenticate(uri: string = "") {
 }
 
 export function useRefreshToken() {
-  const _config = toValue(state).settings?.refreshToken;
+  const _config = state.value.settings?.refreshToken;
   if (_config?.enable) {
     setInterval(async () => {
       refreshToken();
@@ -99,7 +100,7 @@ function refreshToken(
   fn1?: (user: User | null) => void | Promise<void>,
   fn2?: (error: any) => void | Promise<void>
 ) {
-  const mgr = toValue(state).refreshUserManager;
+  const mgr = state.value.refreshUserManager;
   mgr
     ?.signinSilent(args)
     .then((res) => {
@@ -112,5 +113,8 @@ function refreshToken(
 }
 
 function setRedirectUri(uri: string) {
-  useStorage(oidcRedirectUriKey.value, uri).value = uri;
+  unref(state).settings?.oidcSettings.userStore?.set(
+    oidcRedirectUriKey.value,
+    uri
+  );
 }

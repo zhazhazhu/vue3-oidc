@@ -44,7 +44,6 @@
     "vue": "^3.2.37"
   },
   "dependencies": {
-    "@vueuse/core": "^10.2.0",
     "oidc-client-ts": "^2.4.0",
     "vue": ">=3.0.0"
   },

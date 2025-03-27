@@ -47,14 +47,16 @@ export interface CreateOidcOptions {
   redirectUriKey?: string;
 }
 
-export function createOidc(options: CreateOidcOptions) {
+export async function createOidc(options: CreateOidcOptions) {
   const _options = { ...inlineCreateOidcOptions, ...options };
   const { oidcSettings, auth, refreshToken } = _options;
   const events = { ...inlineOidcEvents, ...options.events };
   oidcRedirectUriKey.value = options.redirectUriKey || oidcRedirectUriKey.value;
 
   unref(state).redirect_uri =
-    localStorage.getItem(oidcRedirectUriKey.value) || "";
+    (await unref(state).settings?.oidcSettings.userStore?.get(
+      oidcRedirectUriKey.value
+    )) || "";
   unref(state).settings = _options;
   unref(state).oidcSettings = oidcSettings;
   unref(state).userManager = new UserManager(oidcSettings);
@@ -74,7 +76,7 @@ export function createOidc(options: CreateOidcOptions) {
 
   const { autoAuthenticate } = useAuth();
 
-  if (auth && autoAuthenticate) autoAuthenticate();
+  if (auth && autoAuthenticate) await autoAuthenticate();
 }
 
 export * from "oidc-client-ts";
