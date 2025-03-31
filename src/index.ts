@@ -53,16 +53,16 @@ export async function createOidc(options: CreateOidcOptions) {
   const events = { ...inlineOidcEvents, ...options.events };
   oidcRedirectUriKey.value = options.redirectUriKey || oidcRedirectUriKey.value;
 
-  unref(state).redirect_uri =
-    (await unref(state).settings?.oidcSettings.userStore?.get(
-      oidcRedirectUriKey.value
-    )) || "";
   unref(state).settings = _options;
   unref(state).oidcSettings = oidcSettings;
   unref(state).userManager = new UserManager(oidcSettings);
   unref(state).refreshUserManager = refreshToken?.settings
     ? new UserManager(refreshToken.settings)
     : null;
+  unref(state).redirect_uri =
+    (await unref(state).userManager?.settings.userStore.get(
+      oidcRedirectUriKey.value
+    )) || "";
   //add event listeners to the oidc client
   Object.keys(events).forEach((key) => {
     unref(state).userManager!.events[key](events[key]);

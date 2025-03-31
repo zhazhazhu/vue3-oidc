@@ -22,9 +22,9 @@ export function useAuth() {
   };
 }
 
-function signinRedirect(arg?: SigninRedirectArgs) {
+async function signinRedirect(arg?: SigninRedirectArgs) {
   state.value.oidcSettings?.onBeforeSigninRedirectCallback &&
-    state.value.oidcSettings?.onBeforeSigninRedirectCallback();
+    (await state.value.oidcSettings?.onBeforeSigninRedirectCallback());
   if (!unref(state).user) {
     unref(state).userManager?.signinRedirect(arg);
   }
@@ -43,12 +43,12 @@ async function autoAuthenticate(uri: string = "") {
 
   //if the user and pathCallback is not, then we can authenticate
   if (!user && !isPathOfCallback()) {
-    unref(state).settings?.oidcSettings.userStore?.set(
+    await unref(state).userManager?.settings.userStore?.set(
       oidcRedirectUriKey.value,
       uri || location.pathname + location.search || "/"
     );
     state.value.oidcSettings?.onBeforeSigninRedirectCallback &&
-      state.value.oidcSettings?.onBeforeSigninRedirectCallback();
+      (await state.value.oidcSettings?.onBeforeSigninRedirectCallback());
     await unref(state).userManager?.removeUser();
     await unref(state).userManager?.signinRedirect();
     return;
@@ -57,7 +57,7 @@ async function autoAuthenticate(uri: string = "") {
   if (!user && isPathOfCallback()) {
     const user = await unref(state).userManager?.signinRedirectCallback();
     unref(state).oidcSettings?.onSigninRedirectCallback &&
-      unref(state).oidcSettings?.onSigninRedirectCallback?.(user!);
+      (await unref(state).oidcSettings?.onSigninRedirectCallback?.(user!));
     unref(actions).setUser(user!);
     return;
   }
@@ -77,9 +77,9 @@ async function autoAuthenticate(uri: string = "") {
   }
   //if the user is and pathCallback is then we can recur set the user and run function name is onSigninRedirectCallback
   if (user && isPathOfCallback()) {
-    timer = setInterval(() => {
+    timer = setInterval(async () => {
       unref(state).oidcSettings?.onSigninRedirectCallback &&
-        unref(state).oidcSettings?.onSigninRedirectCallback?.(user);
+        (await unref(state).oidcSettings?.onSigninRedirectCallback?.(user));
       unref(actions).setUser(user);
     }, 3000);
     return;
@@ -112,8 +112,8 @@ function refreshToken(
     });
 }
 
-function setRedirectUri(uri: string) {
-  unref(state).settings?.oidcSettings.userStore?.set(
+async function setRedirectUri(uri: string) {
+  await unref(state).userManager?.settings.userStore?.set(
     oidcRedirectUriKey.value,
     uri
   );

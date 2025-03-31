@@ -1,4 +1,5 @@
 import { MaybeNull } from "@/index";
+import { Awaitable } from "@/utils";
 import {
   User,
   UserManager,
@@ -12,11 +13,11 @@ export interface VueOidcSettings extends UserManagerSettings {
   /**
    *  redirect callback is login success after
    */
-  onSigninRedirectCallback?: (user: User) => void;
+  onSigninRedirectCallback?: (user: User) => Awaitable<void>;
   /**
    * redirect callback is login before
    */
-  onBeforeSigninRedirectCallback?: () => void;
+  onBeforeSigninRedirectCallback?: () => Awaitable<void>;
 }
 
 export type UseUserProfile<T = UserProfile> = T;

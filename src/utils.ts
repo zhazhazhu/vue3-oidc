@@ -49,3 +49,5 @@ export function isPathOfCallback(
 
   return false;
 }
+
+export type Awaitable<T> = Promise<T> | T;
